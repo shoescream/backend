@@ -1,5 +1,4 @@
-package com.sideproject.shoescream.user.configuration;
-
+package com.sideproject.shoescream.member.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
