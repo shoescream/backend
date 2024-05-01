@@ -12,3 +12,11 @@ spring:
     properties:
       hibernate.format_sql: true
       hibernate.default_batch_fetch_size: 100
+  h2.console.enabled: false
+  sql.init.mode: always
+
+jwt:
+  secret-key: sideproject.shoescream-appliction-2024.secret_key
+  token.expired-time-ms: 3600000
+  refreshToken.expired-time-ms : 86400000
+
