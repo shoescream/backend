@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/shoescream
+    hikari:
+      username: root
+      password: 1234
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      hibernate.default_batch_fetch_size: 100
