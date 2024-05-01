@@ -1,5 +1,6 @@
 package com.sideproject.shoescream.member.controller;
 
+import com.sideproject.shoescream.global.dto.response.Response;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
@@ -17,12 +18,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public MemberResponse signUp(@RequestBody MemberSignUpRequest memberSignUpRequest) {
-        return memberService.signUp(memberSignUpRequest);
+    public Response<MemberResponse> signUp(@RequestBody MemberSignUpRequest memberSignUpRequest) {
+        return Response.success(memberService.signUp(memberSignUpRequest));
     }
 
     @PostMapping("/signin")
-    public MemberSignInResponse signIn(@RequestBody MemberSignInRequest memberSignInRequest) {
-        return memberService.signIn(memberSignInRequest);
+    public Response<MemberSignInResponse> signIn(@RequestBody MemberSignInRequest memberSignInRequest) {
+        return Response.success(memberService.signIn(memberSignInRequest));
     }
 }
