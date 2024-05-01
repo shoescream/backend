@@ -1,13 +1,21 @@
 package com.sideproject.shoescream.member.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
 
 @Entity
 @Getter
 @Setter
-public class Member {
+@Builder
+@AllArgsConstructor
+public class Member implements UserDetails {
 
     @Id
     @Column(name = "member_number")
@@ -30,14 +38,33 @@ public class Member {
 
     }
 
-    private Member(String userId, String password, String email, String name) {
-        this.userId = userId;
-        this.password = password;
-        this.email = email;
-        this.name = name;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
-    public static Member of(String userId, String password, String email, String name) {
-        return new Member(userId, password, email, name);
+    @Override
+    public String getUsername() {
+        return this.userId;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 }
