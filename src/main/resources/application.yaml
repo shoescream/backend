@@ -4,6 +4,21 @@ spring:
     hikari:
       username: root
       password: 1234
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: junobee27@gmail.com
+    password: wldmobkrapeqekky
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
   jpa:
     defer-datasource-initialization: true
     hibernate:
@@ -18,5 +33,5 @@ spring:
 jwt:
   secret-key: sideproject.shoescream-appliction-2024.secret_key
   token.expired-time-ms: 3600000
-  refreshToken.expired-time-ms : 86400000
+  refreshToken.expired-time-ms: 86400000
 
