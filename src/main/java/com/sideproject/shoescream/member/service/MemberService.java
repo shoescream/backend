@@ -9,19 +9,27 @@ import com.sideproject.shoescream.member.repository.MemberRepository;
 import com.sideproject.shoescream.member.util.JwtTokenUtil;
 import com.sideproject.shoescream.member.util.MemberMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final BCryptPasswordEncoder encoder;
 
-    public MemberResponse signUp(MemberSignUpRequest memberSignUpRequest) {
+    @Override
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        return memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User is not founded"));
+    }
 
+    public MemberResponse signUp(MemberSignUpRequest memberSignUpRequest) {
         return MemberMapper.toMemberResponse(memberRepository.save(
                 MemberMapper.toMember(memberSignUpRequest,
                         encoder.encode(memberSignUpRequest.password()))));
@@ -42,5 +50,4 @@ public class MemberService {
         return MemberMapper.toSignInResponse(MemberMapper.toMemberResponse(member),
                 MemberMapper.toTokenResponse(accessToken, refreshToken));
     }
-
 }
