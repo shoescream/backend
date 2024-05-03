@@ -1,6 +1,7 @@
 package com.sideproject.shoescream.member.controller;
 
 import com.sideproject.shoescream.global.dto.response.Response;
+import com.sideproject.shoescream.member.dto.request.MemberFindMemberInfoRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
@@ -32,11 +33,21 @@ public class MemberController {
 
     @PostMapping("/mail")
     public Response<String> mailSend(String mail) {
-        return Response.success("" + emailService.sendMail(mail));
+        return Response.success("" + emailService.sendAuthMail(mail));
     }
 
     @GetMapping("/mail-check")
     public Response<String> mailCheck(String mail, Integer authNumber) {
         return Response.success(emailService.checkValidAuthByEmail(mail, authNumber));
+    }
+
+    @GetMapping("/signin/find-id")
+    public Response<String> findMemberId(@RequestBody MemberFindMemberInfoRequest memberFindMemberInfoRequest) {
+        return Response.success(memberService.findMemberId(memberFindMemberInfoRequest));
+    }
+
+    @PostMapping("/signin/find-password")
+    public Response<String> findMemberPassword(@RequestBody MemberFindMemberInfoRequest memberFindMemberInfoRequest) {
+        return Response.success(emailService.sendRandomPasswordMail(memberFindMemberInfoRequest));
     }
 }

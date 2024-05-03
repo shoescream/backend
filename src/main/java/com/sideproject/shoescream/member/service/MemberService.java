@@ -1,15 +1,13 @@
 package com.sideproject.shoescream.member.service;
 
 import com.sideproject.shoescream.global.exception.ErrorCode;
+import com.sideproject.shoescream.member.dto.request.MemberFindMemberInfoRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
 import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
 import com.sideproject.shoescream.member.entity.Member;
-import com.sideproject.shoescream.member.exception.AlreadyExistUserIdException;
-import com.sideproject.shoescream.member.exception.InvalidPasswordException;
-import com.sideproject.shoescream.member.exception.InvalidUserIdAndPasswordException;
-import com.sideproject.shoescream.member.exception.MemberNotFoundException;
+import com.sideproject.shoescream.member.exception.*;
 import com.sideproject.shoescream.member.repository.MemberRepository;
 import com.sideproject.shoescream.member.util.JwtTokenUtil;
 import com.sideproject.shoescream.member.util.MemberMapper;
@@ -30,12 +28,12 @@ public class MemberService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        return memberRepository.findByUserId(userId)
+        return memberRepository.findByMemberId(userId)
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     public MemberResponse signUp(MemberSignUpRequest memberSignUpRequest) {
-        checkUserId(memberSignUpRequest.userId());
+        checkMemberId(memberSignUpRequest.memberId());
         checkPassword(memberSignUpRequest.password());
         checkName(memberSignUpRequest.name());
 
@@ -46,24 +44,32 @@ public class MemberService implements UserDetailsService {
 
 
     public MemberSignInResponse signIn(MemberSignInRequest memberSignInRequest) {
-        Member member = memberRepository.findByUserId(memberSignInRequest.userId())
+        Member member = memberRepository.findByMemberId(memberSignInRequest.memberId())
                 .orElseThrow(
                         () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
         if (!encoder.matches(memberSignInRequest.password(), member.getPassword())) {
-            throw new InvalidUserIdAndPasswordException(ErrorCode.INVALID_USER_ID_AND_PASSWORD);
+            throw new InvalidMemberIdAndPasswordException(ErrorCode.INVALID_USER_ID_AND_PASSWORD);
         }
 
-        String accessToken = jwtTokenUtil.generateToken(member.getUserId());
-        String refreshToken = jwtTokenUtil.generateRefreshToken(member.getUserId());
+        String accessToken = jwtTokenUtil.generateToken(member.getMemberId());
+        String refreshToken = jwtTokenUtil.generateRefreshToken(member.getMemberId());
 
         return MemberMapper.toSignInResponse(MemberMapper.toMemberResponse(member),
                 MemberMapper.toTokenResponse(accessToken, refreshToken));
     }
 
-    private void checkUserId(String userId) {
-        if (memberRepository.existsByUserId(userId)) {
-            throw new AlreadyExistUserIdException(ErrorCode.ALREADY_EXIST_USER_ID);
+    public String findMemberId(MemberFindMemberInfoRequest memberFindMemberInfoRequest) {
+        Member member = memberRepository.findByEmail(memberFindMemberInfoRequest.email())
+                .orElseThrow(
+                        () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        return member.getMemberId();
+    }
+
+    private void checkMemberId(String memberId) {
+        if (memberRepository.existsByMemberId(memberId)) {
+            throw new AlreadyExistMemberIdException(ErrorCode.ALREADY_EXIST_USER_ID);
         }
     }
 
@@ -76,8 +82,8 @@ public class MemberService implements UserDetailsService {
 
     private void checkName(String name) {
         String namePattern = "[\\p{L}\\d]{1,10}";
-        if(!name.matches(namePattern)) {
-            throw new IllegalArgumentException("올바른 이름 형식을 입력 해주세요.");
+        if (!name.matches(namePattern)) {
+            throw new InvalidMemberNameException(ErrorCode.INVALID_MEMBER_NAME);
         }
     }
 }
