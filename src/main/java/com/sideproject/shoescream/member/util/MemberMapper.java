@@ -10,7 +10,7 @@ public class MemberMapper {
 
     public static Member toMember(MemberSignUpRequest memberSignUpRequest, String encodePassword) {
         return Member.builder()
-                .userId(memberSignUpRequest.userId())
+                .memberId(memberSignUpRequest.memberId())
                 .password(encodePassword)
                 .email(memberSignUpRequest.email())
                 .name(memberSignUpRequest.name())
@@ -19,7 +19,7 @@ public class MemberMapper {
 
     public static MemberResponse toMemberResponse(Member member) {
         return MemberResponse.builder()
-                .userId(member.getUserId())
+                .memberId(member.getMemberId())
                 .email(member.getEmail())
                 .name(member.getName())
                 .build();
