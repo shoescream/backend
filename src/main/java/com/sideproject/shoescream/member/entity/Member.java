@@ -23,7 +23,7 @@ public class Member implements UserDetails {
     private Long id;
 
     @Column(nullable = false, length = 100)
-    private String userId;
+    private String memberId;
 
     @Column(nullable = false)
     private String password;
@@ -45,7 +45,7 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.userId;
+        return this.memberId;
     }
 
     @Override
