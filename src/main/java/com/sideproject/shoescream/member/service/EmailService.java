@@ -1,9 +1,11 @@
-package com.sideproject.shoescream.global.service;
+package com.sideproject.shoescream.member.service;
 
 
-import com.sideproject.shoescream.global.constant.AuthType;
-import com.sideproject.shoescream.global.entity.EmailAuth;
-import com.sideproject.shoescream.global.repository.EmailAuthRepository;
+import com.sideproject.shoescream.global.exception.ErrorCode;
+import com.sideproject.shoescream.member.constant.AuthType;
+import com.sideproject.shoescream.member.entity.EmailAuth;
+import com.sideproject.shoescream.member.exception.AlreadyExistEmailException;
+import com.sideproject.shoescream.member.repository.EmailAuthRepository;
 import com.sideproject.shoescream.member.repository.MemberRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
 @Service
 @EnableAsync
 @RequiredArgsConstructor
-public class MailService {
+public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final MemberRepository memberRepository;
@@ -75,7 +77,7 @@ public class MailService {
 
     private void checkEmail(String mail) {
         if (memberRepository.existsByEmail(mail)) {
-            throw new IllegalArgumentException("이메일 중복 입니다.");
+            throw new AlreadyExistEmailException(ErrorCode.ALREADY_EXIST_EMAIL);
         }
     }
 }

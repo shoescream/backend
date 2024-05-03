@@ -1,4 +1,4 @@
-package com.sideproject.shoescream.global.constant;
+package com.sideproject.shoescream.member.constant;
 
 public enum AuthType {
     EMAIL_AUTH,

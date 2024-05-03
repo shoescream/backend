@@ -5,8 +5,10 @@ import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
 import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
+import com.sideproject.shoescream.member.service.EmailService;
 import com.sideproject.shoescream.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
+    private final EmailService emailService;
 
     @PostMapping("/signup")
     public Response<MemberResponse> signUp(@RequestBody MemberSignUpRequest memberSignUpRequest) {
@@ -25,5 +28,15 @@ public class MemberController {
     @PostMapping("/signin")
     public Response<MemberSignInResponse> signIn(@RequestBody MemberSignInRequest memberSignInRequest) {
         return Response.success(memberService.signIn(memberSignInRequest));
+    }
+
+    @PostMapping("/mail")
+    public Response<String> mailSend(String mail) {
+        return Response.success("" + emailService.sendMail(mail));
+    }
+
+    @GetMapping("/mail-check")
+    public Response<String> mailCheck(String mail, Integer authNumber) {
+        return Response.success(emailService.checkValidAuthByEmail(mail, authNumber));
     }
 }

@@ -1,6 +1,6 @@
-package com.sideproject.shoescream.global.entity;
+package com.sideproject.shoescream.member.entity;
 
-import com.sideproject.shoescream.global.constant.AuthType;
+import com.sideproject.shoescream.member.constant.AuthType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

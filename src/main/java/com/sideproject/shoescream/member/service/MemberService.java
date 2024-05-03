@@ -1,10 +1,15 @@
 package com.sideproject.shoescream.member.service;
 
+import com.sideproject.shoescream.global.exception.ErrorCode;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
 import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
 import com.sideproject.shoescream.member.entity.Member;
+import com.sideproject.shoescream.member.exception.AlreadyExistUserIdException;
+import com.sideproject.shoescream.member.exception.InvalidPasswordException;
+import com.sideproject.shoescream.member.exception.InvalidUserIdAndPasswordException;
+import com.sideproject.shoescream.member.exception.MemberNotFoundException;
 import com.sideproject.shoescream.member.repository.MemberRepository;
 import com.sideproject.shoescream.member.util.JwtTokenUtil;
 import com.sideproject.shoescream.member.util.MemberMapper;
@@ -26,14 +31,13 @@ public class MemberService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         return memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User is not founded"));
+                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     public MemberResponse signUp(MemberSignUpRequest memberSignUpRequest) {
         checkUserId(memberSignUpRequest.userId());
         checkPassword(memberSignUpRequest.password());
         checkName(memberSignUpRequest.name());
-
 
         return MemberMapper.toMemberResponse(memberRepository.save(
                 MemberMapper.toMember(memberSignUpRequest,
@@ -44,10 +48,10 @@ public class MemberService implements UserDetailsService {
     public MemberSignInResponse signIn(MemberSignInRequest memberSignInRequest) {
         Member member = memberRepository.findByUserId(memberSignInRequest.userId())
                 .orElseThrow(
-                        () -> new RuntimeException("Invalid UserId and Password Exception"));
+                        () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
         if (!encoder.matches(memberSignInRequest.password(), member.getPassword())) {
-            throw new RuntimeException("Invalid UserId and Password Exception");
+            throw new InvalidUserIdAndPasswordException(ErrorCode.INVALID_USER_ID_AND_PASSWORD);
         }
 
         String accessToken = jwtTokenUtil.generateToken(member.getUserId());
@@ -59,24 +63,21 @@ public class MemberService implements UserDetailsService {
 
     private void checkUserId(String userId) {
         if (memberRepository.existsByUserId(userId)) {
-            throw new IllegalArgumentException("닉네임 중복 입니다.");
+            throw new AlreadyExistUserIdException(ErrorCode.ALREADY_EXIST_USER_ID);
         }
     }
 
     private void checkPassword(String password) {
         String passwordPattern = "^(?=.*[A-Z])(?=.*[!@#$&*])(?=\\S+$).{9,}$";
-
         if (!password.matches(passwordPattern)) {
-            throw new IllegalArgumentException("비밀번호는 영문 대문자를 포함하고, 특수문자를 포함하며, 최소 9자 이상이어야 합니다.");
+            throw new InvalidPasswordException(ErrorCode.INVALID_PASSWORD);
         }
     }
 
     private void checkName(String name) {
         String namePattern = "[\\p{L}\\d]{1,10}";
-
         if(!name.matches(namePattern)) {
             throw new IllegalArgumentException("올바른 이름 형식을 입력 해주세요.");
         }
-
     }
 }

@@ -1,7 +1,7 @@
-package com.sideproject.shoescream.global.repository;
+package com.sideproject.shoescream.member.repository;
 
-import com.sideproject.shoescream.global.constant.AuthType;
-import com.sideproject.shoescream.global.entity.EmailAuth;
+import com.sideproject.shoescream.member.constant.AuthType;
+import com.sideproject.shoescream.member.entity.EmailAuth;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

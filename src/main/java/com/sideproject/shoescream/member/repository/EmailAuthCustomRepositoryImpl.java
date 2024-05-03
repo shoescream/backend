@@ -1,9 +1,9 @@
-package com.sideproject.shoescream.global.repository;
+package com.sideproject.shoescream.member.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sideproject.shoescream.global.constant.AuthType;
-import com.sideproject.shoescream.global.entity.EmailAuth;
-import com.sideproject.shoescream.global.entity.QEmailAuth;
+import com.sideproject.shoescream.member.constant.AuthType;
+import com.sideproject.shoescream.member.entity.EmailAuth;
+import com.sideproject.shoescream.member.entity.QEmailAuth;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDateTime;
