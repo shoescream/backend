@@ -2,6 +2,7 @@ package com.sideproject.shoescream.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sideproject.shoescream.global.dto.response.Response;
+import com.sideproject.shoescream.member.dto.request.MemberFindMemberInfoRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
@@ -82,18 +83,47 @@ class MemberControllerTest {
                 .andExpect(content().json(responseContent));
     }
 
-    private MemberSignInRequest createMemberSignInRequest() {
-        return MemberSignInRequest.builder()
-                .memberId("qownsdh")
-                .password("1234")
-                .build();
+    @Test
+    @DisplayName("[GET] 아이디 찾기 컨트롤러 테스트")
+    @WithMockUser
+    void 유저_아이디_찾기_컨트롤러_테스트() throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        MemberFindMemberInfoRequest request = createMemberFindMemberInfoRequest();
+        String response = "qownsdh";
+
+        String requestContent = mapper.writeValueAsString(request);
+        String responseContent = mapper.writeValueAsString(Response.success(response));
+
+        given(memberService.findMemberId(any(MemberFindMemberInfoRequest.class))).willReturn(response);
+
+        mockMvc.perform(get("/signin/find-id").with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestContent))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseContent));
+
     }
 
-    private MemberSignInResponse createMemberSignInResponse() {
-        return MemberSignInResponse.builder()
-                .memberResponse(createMemberResponse())
-                .tokenResponse(createTokenResponse())
-                .build();
+    @Test
+    @DisplayName("[POST] 비밀번호 찾기 컨트롤러 테스트")
+    @WithMockUser
+    void 비밀번호_찾기_컨트롤러_테스트() throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        MemberFindMemberInfoRequest request = createMemberFindMemberInfoRequest();
+        String response = "임시 비밀번호 발급 메일이 성공적으로 전송되었습니다.";
+
+        String requestContent = mapper.writeValueAsString(request);
+        String responseContent = mapper.writeValueAsString(Response.success(response));
+
+        given(emailService.sendRandomPasswordMail(any(MemberFindMemberInfoRequest.class))).willReturn(response);
+
+        mockMvc.perform(post("/signin/find-password").with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestContent))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseContent));
     }
 
     private MemberSignUpRequest createMemberSignUpRequest() {
@@ -113,10 +143,31 @@ class MemberControllerTest {
                 .build();
     }
 
+
+    private MemberSignInRequest createMemberSignInRequest() {
+        return MemberSignInRequest.builder()
+                .memberId("qownsdh")
+                .password("1234")
+                .build();
+    }
+
+    private MemberSignInResponse createMemberSignInResponse() {
+        return MemberSignInResponse.builder()
+                .memberResponse(createMemberResponse())
+                .tokenResponse(createTokenResponse())
+                .build();
+    }
+
     private TokenResponse createTokenResponse() {
         return TokenResponse.builder()
                 .accessToken("123123123123123123")
                 .refreshToken("123123123123123123")
+                .build();
+    }
+
+    private MemberFindMemberInfoRequest createMemberFindMemberInfoRequest() {
+        return MemberFindMemberInfoRequest.builder()
+                .email("wnsdhqo@naver.com")
                 .build();
     }
 }
