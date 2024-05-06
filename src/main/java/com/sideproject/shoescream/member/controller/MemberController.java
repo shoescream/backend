@@ -1,18 +1,19 @@
 package com.sideproject.shoescream.member.controller;
 
 import com.sideproject.shoescream.global.dto.response.Response;
+import com.sideproject.shoescream.member.dto.KaKaoTokenDto;
 import com.sideproject.shoescream.member.dto.request.MemberFindMemberInfoRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
 import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
+import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.service.EmailService;
 import com.sideproject.shoescream.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,5 +50,11 @@ public class MemberController {
     @PostMapping("/signin/find-password")
     public Response<String> findMemberPassword(@RequestBody MemberFindMemberInfoRequest memberFindMemberInfoRequest) {
         return Response.success(emailService.sendRandomPasswordMail(memberFindMemberInfoRequest));
+    }
+
+    @GetMapping("/oauth/token")
+    public Response<Member> kakaoLogin(@RequestParam("code") String code) {
+        KaKaoTokenDto kaKaoTokenDto = memberService.getKakaoAccessToken(code);
+        return Response.success(memberService.kakaoLogin(kaKaoTokenDto.getAccess_token()));
     }
 }
