@@ -84,9 +84,37 @@ class MemberControllerTest {
     }
 
     @Test
+    @DisplayName("[POST] 회원가입 시 이메일 인증 컨트롤러 테스트")
+    @WithMockUser
+    void 회원가입_이메일_인증_컨트롤러_테스트() throws Exception {
+        // request => String, response => String
+        String request = "wnsdhqo@naver.com";
+        Integer response = 123456;
+
+        given(emailService.sendAuthMail(any())).willReturn(response);
+
+        mockMvc.perform(post("/mail").with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[GET] 이메일 인증 번호 확인 컨트롤러 테스트")
+    @WithMockUser
+    void 이메일_인증_번호_확인_컨트롤러_테스트() throws Exception {
+        String request1 = "wnsdhqo@naver.com";
+        Integer request2 = 123456;
+        String response = "이메일 인증 성공";
+
+        given(emailService.checkValidAuthByEmail(any(), any())).willReturn(response);
+
+        mockMvc.perform(get("/mail-check").with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("[GET] 아이디 찾기 컨트롤러 테스트")
     @WithMockUser
-    void 유저_아이디_찾기_컨트롤러_테스트() throws Exception{
+    void 유저_아이디_찾기_컨트롤러_테스트() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         MemberFindMemberInfoRequest request = createMemberFindMemberInfoRequest();
         String response = "qownsdh";
@@ -108,7 +136,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("[POST] 비밀번호 찾기 컨트롤러 테스트")
     @WithMockUser
-    void 비밀번호_찾기_컨트롤러_테스트() throws Exception{
+    void 비밀번호_찾기_컨트롤러_테스트() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         MemberFindMemberInfoRequest request = createMemberFindMemberInfoRequest();
         String response = "임시 비밀번호 발급 메일이 성공적으로 전송되었습니다.";
