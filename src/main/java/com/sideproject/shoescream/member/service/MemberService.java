@@ -76,13 +76,16 @@ public class MemberService implements UserDetailsService {
                 MemberMapper.toTokenResponse(accessToken, refreshToken));
     }
 
-    public MemberSignInResponse kakaoLogin(String kakaoAccessToken) {
+    public MemberSignInResponse kakaoLogin(String kakaoAccessToken) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         KakaoProfile kakaoProfile = getKakaoProfile(kakaoAccessToken);
         Member member = memberRepository.findByEmail(kakaoProfile.getKakao_account().getEmail()).orElse(null);
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println(objectMapper.writeValueAsString(kakaoProfile));
+        System.out.println("----------------------------------------------");
+        System.out.println("이메일 정보" +kakaoProfile.getKakao_account().getEmail());
         // 처음 로그인일 경우
         if (member == null) {
             member = Member.builder()
