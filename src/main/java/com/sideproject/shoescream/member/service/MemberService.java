@@ -36,8 +36,8 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final BCryptPasswordEncoder encoder;
-    public static final String KAKAO_CLIENT_ID = "cb87d198bac8bdd63f6684692e3d827c";
-    public static final String KAKAO_CLIENT_SECRET = "HduZ5Cvc9TGDlLEgdWiJEfBeRdQTbXHa";
+    public static final String KAKAO_CLIENT_ID = "5797ba8ddb82400cc70c0514d061765d";
+    public static final String KAKAO_CLIENT_SECRET = "X9vuwVOjxa6El6R6tEvWkZHNNTUcOXIP";
     public static final String KAKAO_REDIRECT_URI = "http://localhost:3000/oauth/kakao";
     public static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     public static final String KAKAO_USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
