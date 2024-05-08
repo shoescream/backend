@@ -38,7 +38,7 @@ public class MemberService implements UserDetailsService {
     private final BCryptPasswordEncoder encoder;
     public static final String KAKAO_CLIENT_ID = "cb87d198bac8bdd63f6684692e3d827c";
     public static final String KAKAO_CLIENT_SECRET = "HduZ5Cvc9TGDlLEgdWiJEfBeRdQTbXHa";
-    public static final String KAKAO_REDIRECT_URI = "http://13.125.247.226:8080/login/oauth2/code/kakao";
+    public static final String KAKAO_REDIRECT_URI = "http://localhost:8080/login/oauth2/code/kakao";
     public static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     public static final String KAKAO_USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
 
@@ -76,23 +76,26 @@ public class MemberService implements UserDetailsService {
                 MemberMapper.toTokenResponse(accessToken, refreshToken));
     }
 
-    public Member kakaoLogin(String kakaoAccessToken) {
+    public MemberSignInResponse kakaoLogin(String kakaoAccessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         KakaoProfile kakaoProfile = getKakaoProfile(kakaoAccessToken);
-        Member member = memberRepository.findByEmail(kakaoProfile.getKakaoAccount().getEmail()).orElse(null);
+        Member member = memberRepository.findByEmail(kakaoProfile.getKakao_account().getEmail()).orElse(null);
 
         // 처음 로그인일 경우
         if (member == null) {
             member = Member.builder()
                     .id(kakaoProfile.getId())
-                    .email(kakaoProfile.getKakaoAccount().getEmail())
-                    .name(kakaoProfile.getKakaoAccount().getNickname())
+                    .email(kakaoProfile.getKakao_account().getEmail())
+                    .name(kakaoProfile.getKakao_account().getProfile().getNickname())
                     .build();
             memberRepository.save(member);
         }
-        return member;
+        String accessToken = jwtTokenUtil.generateToken(member.getMemberId());
+        String refreshToken = jwtTokenUtil.generateRefreshToken(member.getMemberId());
+        return MemberMapper.toSignInResponse(MemberMapper.toMemberResponse(member),
+                MemberMapper.toTokenResponse(accessToken, refreshToken));
     }
 
     public KaKaoTokenDto getKakaoAccessToken(String code) {

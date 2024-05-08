@@ -22,10 +22,10 @@ public class Member implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String memberId;
 
-    @Column(nullable = false)
+    @Column(length = 255)
     private String password;
 
     @Column(nullable = false)

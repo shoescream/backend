@@ -53,7 +53,7 @@ public class MemberController {
     }
 
     @GetMapping("/oauth/token")
-    public Response<Member> kakaoLogin(@RequestParam("code") String code) {
+    public Response<MemberSignInResponse> kakaoLogin(@RequestParam("code") String code) {
         KaKaoTokenDto kaKaoTokenDto = memberService.getKakaoAccessToken(code);
         return Response.success(memberService.kakaoLogin(kaKaoTokenDto.getAccess_token()));
     }
