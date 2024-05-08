@@ -13,6 +13,7 @@ import com.sideproject.shoescream.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final EmailService emailService;
+    private static final String client_id = "cb87d198bac8bdd63f6684692e3d827c";
+    private static final String redirect_uri = "http://localhost:3000/oauth/kakao";
 
     @PostMapping("/signup")
     public Response<MemberResponse> signUp(@RequestBody MemberSignUpRequest memberSignUpRequest) {
@@ -50,6 +53,12 @@ public class MemberController {
     @PostMapping("/signin/find-password")
     public Response<String> findMemberPassword(@RequestBody MemberFindMemberInfoRequest memberFindMemberInfoRequest) {
         return Response.success(emailService.sendRandomPasswordMail(memberFindMemberInfoRequest));
+    }
+
+    @GetMapping("/oauth/kakao")
+    public void getKakaoAuthorizationCode(Model model) {
+        String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
+        model.addAttribute("location" + location);
     }
 
     @GetMapping("/oauth/token")
