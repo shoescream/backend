@@ -38,7 +38,7 @@ public class MemberService implements UserDetailsService {
     private final BCryptPasswordEncoder encoder;
     public static final String KAKAO_CLIENT_ID = "cb87d198bac8bdd63f6684692e3d827c";
     public static final String KAKAO_CLIENT_SECRET = "HduZ5Cvc9TGDlLEgdWiJEfBeRdQTbXHa";
-    public static final String KAKAO_REDIRECT_URI = "http://localhost:8080/login/oauth2/code/kakao";
+    public static final String KAKAO_REDIRECT_URI = "http://13.125.247.226:8080/login/oauth2/code/kakao";
     public static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     public static final String KAKAO_USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
 
