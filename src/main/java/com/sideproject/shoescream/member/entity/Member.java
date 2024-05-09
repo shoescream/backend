@@ -34,6 +34,9 @@ public class Member implements UserDetails {
     @Column(nullable = false, length = 50)
     private String name;
 
+    @Column(length = 1000)
+    private String profileImage;
+
     protected Member() {
 
     }

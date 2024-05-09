@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sideproject.shoescream.global.exception.ErrorCode;
 import com.sideproject.shoescream.member.dto.KaKaoTokenDto;
 import com.sideproject.shoescream.member.dto.KakaoProfile;
+import com.sideproject.shoescream.member.dto.request.KaKaoSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberFindMemberInfoRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
@@ -76,30 +77,49 @@ public class MemberService implements UserDetailsService {
                 MemberMapper.toTokenResponse(accessToken, refreshToken));
     }
 
-    public MemberSignInResponse kakaoLogin(String kakaoAccessToken) throws JsonProcessingException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-
-        KakaoProfile kakaoProfile = getKakaoProfile(kakaoAccessToken);
-        Member member = memberRepository.findByEmail(kakaoProfile.getKakao_account().getEmail()).orElse(null);
-        ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println(objectMapper.writeValueAsString(kakaoProfile));
-        System.out.println("----------------------------------------------");
-        System.out.println("이메일 정보" +kakaoProfile.getKakao_account().getEmail());
-        // 처음 로그인일 경우
+    public MemberSignInResponse kakaoLogin(KaKaoSignInRequest kaKaoSignInRequest) {
+        Member member = memberRepository.findByEmail(kaKaoSignInRequest.email()).orElse(null);
         if (member == null) {
             member = Member.builder()
-                    .id(kakaoProfile.getId())
-                    .email(kakaoProfile.getKakao_account().getEmail())
-                    .name(kakaoProfile.getKakao_account().getProfile().getNickname())
+                    .id(kaKaoSignInRequest.id())
+                    .memberId("kakao" + kaKaoSignInRequest.id())
+                    .email(kaKaoSignInRequest.email())
+                    .name(kaKaoSignInRequest.nickname())
+                    .profileImage(kaKaoSignInRequest.profile_image())
                     .build();
             memberRepository.save(member);
         }
         String accessToken = jwtTokenUtil.generateToken(member.getMemberId());
         String refreshToken = jwtTokenUtil.generateRefreshToken(member.getMemberId());
+
         return MemberMapper.toSignInResponse(MemberMapper.toMemberResponse(member),
                 MemberMapper.toTokenResponse(accessToken, refreshToken));
     }
+
+//    public MemberSignInResponse kakaoLogin(String kakaoAccessToken) throws JsonProcessingException {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+//
+//        KakaoProfile kakaoProfile = getKakaoProfile(kakaoAccessToken);
+//        Member member = memberRepository.findByEmail(kakaoProfile.getKakao_account().getEmail()).orElse(null);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        System.out.println(objectMapper.writeValueAsString(kakaoProfile));
+//        System.out.println("----------------------------------------------");
+//        System.out.println("이메일 정보" +kakaoProfile.getKakao_account().getEmail());
+//        // 처음 로그인일 경우
+//        if (member == null) {
+//            member = Member.builder()
+//                    .id(kakaoProfile.getId())
+//                    .email(kakaoProfile.getKakao_account().getEmail())
+//                    .name(kakaoProfile.getKakao_account().getProfile().getNickname())
+//                    .build();
+//            memberRepository.save(member);
+//        }
+//        String accessToken = jwtTokenUtil.generateToken(member.getMemberId());
+//        String refreshToken = jwtTokenUtil.generateRefreshToken(member.getMemberId());
+//        return MemberMapper.toSignInResponse(MemberMapper.toMemberResponse(member),
+//                MemberMapper.toTokenResponse(accessToken, refreshToken));
+//    }
 
     public KaKaoTokenDto getKakaoAccessToken(String code) {
         HttpHeaders headers = new HttpHeaders();

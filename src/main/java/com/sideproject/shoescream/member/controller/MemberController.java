@@ -1,12 +1,15 @@
 package com.sideproject.shoescream.member.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sideproject.shoescream.global.dto.response.Response;
 import com.sideproject.shoescream.member.dto.KaKaoTokenDto;
+import com.sideproject.shoescream.member.dto.request.KaKaoSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberFindMemberInfoRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
 import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
+import com.sideproject.shoescream.member.dto.response.TokenResponse;
 import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.service.EmailService;
 import com.sideproject.shoescream.member.service.MemberService;
@@ -51,20 +54,25 @@ public class MemberController {
         return Response.success(memberService.findMemberId(memberFindMemberInfoRequest));
     }
 
+    @PostMapping("/kakao-login")
+    public Response<MemberSignInResponse> kakaoLogin(@RequestBody KaKaoSignInRequest kaKaoSignInRequest) {
+        return Response.success(memberService.kakaoLogin(kaKaoSignInRequest));
+    }
+
     @PostMapping("/signin/find-password")
     public Response<String> findMemberPassword(@RequestBody MemberFindMemberInfoRequest memberFindMemberInfoRequest) {
         return Response.success(emailService.sendRandomPasswordMail(memberFindMemberInfoRequest));
     }
-
-    @GetMapping("/oauth/kakao")
-    public void getKakaoAuthorizationCode(Model model) {
-        String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
-        model.addAttribute("location" + location);
-    }
-
-    @GetMapping("/oauth/token")
-    public Response<MemberSignInResponse> kakaoLogin(@RequestParam("code") String code) {
-        KaKaoTokenDto kaKaoTokenDto = memberService.getKakaoAccessToken(code);
-        return Response.success(memberService.kakaoLogin(kaKaoTokenDto.getAccess_token()));
-    }
+//
+//    @GetMapping("/oauth/kakao")
+//    public void getKakaoAuthorizationCode(Model model) {
+//        String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
+//        model.addAttribute("location" + location);
+//    }
+//
+//    @GetMapping("/oauth/token")
+//    public Response<MemberSignInResponse> kakaoLogin(@RequestParam("code") String code) throws JsonProcessingException {
+//        KaKaoTokenDto kaKaoTokenDto = memberService.getKakaoAccessToken(code);
+//        return Response.success(memberService.kakaoLogin(kaKaoTokenDto.getAccess_token()));
+//    }
 }
