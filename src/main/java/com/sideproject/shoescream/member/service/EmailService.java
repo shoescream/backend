@@ -10,6 +10,7 @@ import com.sideproject.shoescream.member.exception.AlreadyExistEmailException;
 import com.sideproject.shoescream.member.exception.MemberNotFoundException;
 import com.sideproject.shoescream.member.repository.EmailAuthRepository;
 import com.sideproject.shoescream.member.repository.MemberRepository;
+import com.sideproject.shoescream.member.util.PasswordGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class EmailService {
 
     private static final String SENDER_EMAIL = "junobee27@gmail.com";
     private static int authNumber;
-    private static int randomPassword;
+    private static String randomPassword;
 
     public MimeMessage createAuthMail(String mail) {
         createNumber();
@@ -78,7 +79,10 @@ public class EmailService {
     public static void createNumber() {
         authNumber = (int) (Math.random() * (90000)) + 100000;
     }
-    public static void createRandomPassword() {randomPassword =  (int) (Math.random() * (90000)) + 100000;}
+
+    public static void createRandomPassword() {
+        randomPassword = PasswordGenerator.generateRandomPassword(10);
+    }
 
     public int sendAuthMail(String mail) {
         checkEmail(mail);
@@ -101,7 +105,7 @@ public class EmailService {
                         new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         MimeMessage message = createFindPasswordMail(memberFindMemberInfoRequest.email());
         javaMailSender.send(message);
-        member.setPassword(encoder.encode(Integer.toString(randomPassword)));
+        member.setPassword(encoder.encode(randomPassword));
         return "비밀번호 발급 메일이 성공적으로 전송되었습니다.";
     }
 
