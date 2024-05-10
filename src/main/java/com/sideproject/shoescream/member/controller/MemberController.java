@@ -1,18 +1,15 @@
 package com.sideproject.shoescream.member.controller;
 
 import com.sideproject.shoescream.global.dto.response.Response;
-import com.sideproject.shoescream.member.dto.KaKaoTokenDto;
+import com.sideproject.shoescream.member.dto.request.KaKaoSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberFindMemberInfoRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
 import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
-import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.service.EmailService;
 import com.sideproject.shoescream.member.service.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,23 +35,22 @@ public class MemberController {
     }
 
     @GetMapping("/mail-check")
-    public Response<String> mailCheck(String mail, Integer authNumber) {
+    public Response<String> mailCheck(@RequestParam String mail, Integer authNumber) {
         return Response.success(emailService.checkValidAuthByEmail(mail, authNumber));
     }
 
     @GetMapping("/signin/find-id")
-    public Response<String> findMemberId(@RequestBody MemberFindMemberInfoRequest memberFindMemberInfoRequest) {
-        return Response.success(memberService.findMemberId(memberFindMemberInfoRequest));
+    public Response<String> findMemberId(@RequestParam String mail) {
+        return Response.success(memberService.findMemberId(mail));
+    }
+
+    @PostMapping("/kakao-login")
+    public Response<MemberSignInResponse> kakaoLogin(@RequestBody KaKaoSignInRequest kaKaoSignInRequest) {
+        return Response.success(memberService.kakaoLogin(kaKaoSignInRequest));
     }
 
     @PostMapping("/signin/find-password")
     public Response<String> findMemberPassword(@RequestBody MemberFindMemberInfoRequest memberFindMemberInfoRequest) {
         return Response.success(emailService.sendRandomPasswordMail(memberFindMemberInfoRequest));
-    }
-
-    @GetMapping("/oauth/token")
-    public Response<Member> kakaoLogin(@RequestParam("code") String code) {
-        KaKaoTokenDto kaKaoTokenDto = memberService.getKakaoAccessToken(code);
-        return Response.success(memberService.kakaoLogin(kaKaoTokenDto.getAccess_token()));
     }
 }
