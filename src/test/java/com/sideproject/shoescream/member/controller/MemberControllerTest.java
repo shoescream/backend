@@ -122,7 +122,7 @@ class MemberControllerTest {
         String requestContent = mapper.writeValueAsString(request);
         String responseContent = mapper.writeValueAsString(Response.success(response));
 
-        given(memberService.findMemberId(any(MemberFindMemberInfoRequest.class))).willReturn(response);
+        given(memberService.findMemberId(any())).willReturn(response);
 
         mockMvc.perform(get("/signin/find-id").with(csrf())
                         .accept(MediaType.APPLICATION_JSON)
