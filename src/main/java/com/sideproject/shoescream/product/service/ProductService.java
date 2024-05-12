@@ -22,4 +22,10 @@ public class ProductService {
                 .map(ProductMapper::toProductResponse)
                 .collect(Collectors.toList());
     }
+
+    public ProductResponse getProduct(String productNumber) {
+        Product product = productRepository.findById(Long.valueOf(productNumber))
+                .orElseThrow(() -> new RuntimeException());
+        return ProductMapper.toProductResponse(product);
+    }
 }
