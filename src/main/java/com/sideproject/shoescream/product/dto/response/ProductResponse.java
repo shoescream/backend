@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
 
 @Builder
 public record ProductResponse(
-        Product product
-) {
+        String productName,
+        String productSubName,
+        String brandName,
+        String productImage,
+        LocalDateTime createdAt,
+        Long views) {
 }
