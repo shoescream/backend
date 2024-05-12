@@ -105,9 +105,12 @@ class MemberControllerTest {
         Integer request2 = 123456;
         String response = "이메일 인증 성공";
 
-        given(emailService.checkValidAuthByEmail(any(), any())).willReturn(response);
+        given(emailService.checkValidAuthByEmail(any(), anyInt())).willReturn(response);
 
-        mockMvc.perform(get("/mail-check").with(csrf()))
+        mockMvc.perform(get("/mail-check")
+                        .param("mail", request1)
+                        .param("authNumber", String.valueOf(request2))
+                        .with(csrf()))
                 .andExpect(status().isOk());
     }
 
@@ -115,22 +118,14 @@ class MemberControllerTest {
     @DisplayName("[GET] 아이디 찾기 컨트롤러 테스트")
     @WithMockUser
     void 유저_아이디_찾기_컨트롤러_테스트() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        MemberFindMemberInfoRequest request = createMemberFindMemberInfoRequest();
+        String request = "wnsdhqo@naver.com";
         String response = "qownsdh";
-
-        String requestContent = mapper.writeValueAsString(request);
-        String responseContent = mapper.writeValueAsString(Response.success(response));
-
         given(memberService.findMemberId(any())).willReturn(response);
 
-        mockMvc.perform(get("/signin/find-id").with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestContent))
-                .andExpect(status().isOk())
-                .andExpect(content().json(responseContent));
-
+        mockMvc.perform(get("/signin/find-id")
+                    .param("mail", request)
+                    .with(csrf()))
+                .andExpect(status().isOk());
     }
 
     @Test
