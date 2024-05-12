@@ -1,6 +1,7 @@
 package com.sideproject.shoescream.product.controller;
 
 import com.sideproject.shoescream.global.dto.response.Response;
+import com.sideproject.shoescream.product.dto.response.ProductDetailResponse;
 import com.sideproject.shoescream.product.dto.response.ProductResponse;
 import com.sideproject.shoescream.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/{productNumber}")
-    public Response<ProductResponse> getProduct(@PathVariable String productNumber) {
+    public Response<ProductDetailResponse> getProduct(@PathVariable String productNumber) {
         return Response.success(productService.getProduct(productNumber));
     }
 }

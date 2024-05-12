@@ -1,5 +1,6 @@
 package com.sideproject.shoescream.product.service;
 
+import com.sideproject.shoescream.product.dto.response.ProductDetailResponse;
 import com.sideproject.shoescream.product.dto.response.ProductResponse;
 import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.repository.ProductRepository;
@@ -23,9 +24,9 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public ProductResponse getProduct(String productNumber) {
+    public ProductDetailResponse getProduct(String productNumber) {
         Product product = productRepository.findById(Long.valueOf(productNumber))
                 .orElseThrow(() -> new RuntimeException());
-        return ProductMapper.toProductResponse(product);
+        return ProductMapper.toProductDetailResponse(product);
     }
 }

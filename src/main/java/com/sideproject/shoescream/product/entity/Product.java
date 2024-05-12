@@ -1,10 +1,7 @@
 package com.sideproject.shoescream.product.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -37,6 +34,9 @@ public class Product {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    private ProductOption productOption;
 
     protected Product() {
 
