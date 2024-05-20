@@ -6,5 +6,5 @@ import java.util.List;
 
 @Builder
 public record ProductOptionResponse(
-        List<Integer> size) {
+        List<String> size) {
 }

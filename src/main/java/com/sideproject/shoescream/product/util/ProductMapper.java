@@ -26,10 +26,10 @@ public class ProductMapper {
     }
 
     public static ProductOptionResponse toProductOptionResponse(List<ProductOption> productOption) {
-        List<Integer> productSize = productOption.stream()
+        List<String> productSize = productOption.stream()
                 .map(ProductOption::getSize)
                 .toList();
-        
+
         return ProductOptionResponse.builder()
                 .size(productSize)
                 .build();
