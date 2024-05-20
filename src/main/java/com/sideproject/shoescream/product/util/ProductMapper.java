@@ -25,16 +25,22 @@ public class ProductMapper {
                 .build();
     }
 
-    public static ProductOptionResponse toProductOptionResponse(ProductOption productOption) {
+    public static ProductOptionResponse toProductOptionResponse(List<ProductOption> productOption) {
+        List<Integer> productSize = productOption.stream()
+                .map(ProductOption::getSize)
+                .toList();
+        
         return ProductOptionResponse.builder()
-                .size(productOption.getSize())
+                .size(productSize)
                 .build();
     }
 
     public static ProductDetailResponse toProductDetailResponse(Product product) {
+        List<ProductOption> productOption = product.getProductOption().stream()
+                .toList();
         return ProductDetailResponse.builder()
                 .productResponse(toProductResponse(product))
-                .productOptionResponse(toProductOptionResponse(product.getProductOption()))
+                .productOptionResponse(toProductOptionResponse(productOption))
                 .build();
     }
 

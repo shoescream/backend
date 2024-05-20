@@ -1,6 +1,5 @@
 package com.sideproject.shoescream.product.entity;
 
-import com.sideproject.shoescream.product.constant.SizeType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,10 +15,10 @@ public class ProductOption {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private SizeType size;
+    @Column(name = "product_size")
+    private Integer size;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_number")
     private Product product;
 

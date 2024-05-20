@@ -45,8 +45,8 @@ public class Product {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    private ProductOption productOption;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductOption> productOption;
 
     protected Product() {
 
