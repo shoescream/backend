@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -45,8 +46,9 @@ public class Product {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    // 사이즈 별 ( + 사이즈 , 색깔 별 ) 최고 가격 최저 가격 중복 처리 필수
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductOption> productOption;
+    private Set<ProductOption> productOption;
 
     protected Product() {
 
