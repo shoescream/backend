@@ -1,5 +1,7 @@
 package com.sideproject.shoescream.product.entity;
 
+import com.sideproject.shoescream.bid.entity.BuyingBid;
+import com.sideproject.shoescream.bid.entity.SellingBid;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -49,6 +51,12 @@ public class Product {
     // 사이즈 별 ( + 사이즈 , 색깔 별 ) 최고 가격 최저 가격 중복 처리 필수
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private Set<ProductOption> productOption;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<SellingBid> sellingBids;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<BuyingBid> buyingBids;
 
     protected Product() {
 

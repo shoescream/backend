@@ -15,16 +15,19 @@ public class ProductOption {
     @Id
     @Column(name = "product_option_number")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(name = "product_size")
     private String size;
 
+    // lowerPrice >= highestPrice 판매자는 높은 금액으로 팔려 함, 구매자는 낮은 금액으로 사려 함
+    // 판매자가 올린 제일 낮은 가격 => 즉시 구매, 더 낮은 금액 => 구매 입찰
     @Column(name = "lower_price")
-    private Integer lowestPrice;
+    private int lowestPrice;
 
+    // 구매자가 올린 제일 높은 가격 => 즉시 판매, 더 높은 금액 => 판매 입찰
     @Column(name = "high_price")
-    private Integer highestPrice;
+    private int highestPrice;
 
     @ManyToOne
     @JoinColumn(name = "product_number")

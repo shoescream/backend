@@ -1,4 +1,4 @@
-package com.sideproject.shoescream.bid.dto;
+package com.sideproject.shoescream.bid.dto.response;
 
 import lombok.Builder;
 
@@ -10,8 +10,8 @@ public record BuyingProductInfoResponse(
 
         String productSubName,
 
-        Integer lowestPrice,
+        int lowestPrice,
 
-        Integer highestPrice
+        int highestPrice
 ) {
 }
