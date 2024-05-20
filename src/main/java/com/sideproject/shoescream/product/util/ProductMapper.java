@@ -6,6 +6,7 @@ import com.sideproject.shoescream.product.entity.ProductImage;
 import com.sideproject.shoescream.product.entity.ProductOption;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProductMapper {
@@ -26,12 +27,17 @@ public class ProductMapper {
     }
 
     public static ProductOptionResponse toProductOptionResponse(List<ProductOption> productOption) {
-        List<String> productSize = productOption.stream()
-                .map(ProductOption::getSize)
-                .toList();
+        Map<String, Integer> sizeAndPriceBuyInfo = productOption.stream()
+                .collect(Collectors.toMap(ProductOption::getSize, ProductOption::getHighestPrice));
+
+        Map<String, Integer> sizeAndPriceSellInfo = productOption.stream()
+                .collect(Collectors.toMap(ProductOption::getSize, ProductOption::getLowestPrice));
 
         return ProductOptionResponse.builder()
-                .size(productSize)
+                .sizeAndPriceBuyInfo(sizeAndPriceSellInfo)
+                .sizeAndPriceSellInfo(sizeAndPriceBuyInfo)
+                .minBuyInfo(findMinSellPrice(sizeAndPriceSellInfo))
+                .maxSellInfo(findMaxBuyPrice(sizeAndPriceBuyInfo))
                 .build();
     }
 
@@ -63,5 +69,19 @@ public class ProductMapper {
                 .productImage(imageUrls)
                 .build();
 
+    }
+
+    private static Integer findMinSellPrice(Map<String, Integer> sizeAndPriceSellInfo) {
+        if (sizeAndPriceSellInfo == null || sizeAndPriceSellInfo.isEmpty()) {
+            return 0;
+        }
+        return sizeAndPriceSellInfo.values().stream().min(Integer::compareTo).get();
+    }
+
+    private static Integer findMaxBuyPrice(Map<String, Integer> sizeAndPriceBuyInfo) {
+        if (sizeAndPriceBuyInfo == null || sizeAndPriceBuyInfo.isEmpty()) {
+            return 0;
+        }
+        return sizeAndPriceBuyInfo.values().stream().max(Integer::compareTo).get();
     }
 }
