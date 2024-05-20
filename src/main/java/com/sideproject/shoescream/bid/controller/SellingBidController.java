@@ -13,7 +13,7 @@ public class SellingBidController {
     private final SellingBidService sellingBidService;
 
     @GetMapping("/sell/{productNumber}")
-    public Response<SellingProductInfoResponse> getSellingProductInfo(@PathVariable Long productNumber, @RequestParam String size, @RequestParam String dealType) {
-        return Response.success(sellingBidService.getSellingProductInfo(productNumber, size, dealType));
+    public Response<SellingProductInfoResponse> getSellingProductInfo(@PathVariable Long productNumber, @RequestParam String size) {
+        return Response.success(sellingBidService.getSellingProductInfo(productNumber, size));
     }
 }

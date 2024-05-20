@@ -1,8 +1,8 @@
 package com.sideproject.shoescream.bid.service;
 
-import com.sideproject.shoescream.bid.dto.SellingProductInfoResponse;
-import com.sideproject.shoescream.bid.repository.SellingBidRepository;
-import com.sideproject.shoescream.bid.util.SellingBidMapper;
+import com.sideproject.shoescream.bid.dto.BuyingProductInfoResponse;
+import com.sideproject.shoescream.bid.repository.BuyingBidRepository;
+import com.sideproject.shoescream.bid.util.BuyingBidMapper;
 import com.sideproject.shoescream.product.entity.ProductOption;
 import com.sideproject.shoescream.product.repository.ProductImageRepository;
 import com.sideproject.shoescream.product.repository.ProductOptionRepository;
@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class SellingBidService {
+public class BuyingBidService {
 
-    private final SellingBidRepository sellingBidRepository;
+    private final BuyingBidRepository buyingBidRepository;
     private final ProductRepository productRepository;
     private final ProductOptionRepository productOptionRepository;
     private final ProductImageRepository productImageRepository;
 
-    public SellingProductInfoResponse getSellingProductInfo(Long productNumber, String size) {
+    public BuyingProductInfoResponse getBuyingProductInfo(Long productNumber, String size) {
         ProductOption product = productOptionRepository.findByProductIdAndSize(productNumber, size);
-        return SellingBidMapper.toSellingProductInfoResponse(product);
+        return BuyingBidMapper.toBuyingProductInfoResponse(product);
     }
 }
