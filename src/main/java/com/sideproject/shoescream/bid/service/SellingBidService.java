@@ -19,7 +19,7 @@ public class SellingBidService {
     private final ProductOptionRepository productOptionRepository;
     private final ProductImageRepository productImageRepository;
 
-    public SellingProductInfoResponse getSellingProductInfo(Long productNumber, String size, String dealType) {
+    public SellingProductInfoResponse getSellingProductInfo(Long productNumber, String size) {
         ProductOption product = productOptionRepository.findByProductIdAndSize(productNumber, size);
         return SellingBidMapper.toSellingProductInfoResponse(product);
     }
