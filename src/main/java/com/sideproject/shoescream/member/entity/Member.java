@@ -1,5 +1,6 @@
 package com.sideproject.shoescream.member.entity;
 
+import com.sideproject.shoescream.bid.entity.Bid;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -36,6 +38,9 @@ public class Member implements UserDetails {
 
     @Column(length = 1000)
     private String profileImage;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Bid> bids;
 
     protected Member() {
 

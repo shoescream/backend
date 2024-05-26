@@ -5,7 +5,8 @@ import lombok.Builder;
 @Builder
 public record BuyingBidResponse(
         String productCode,
-
-        int price
+        String size,
+        int price,
+        int quantity
 ) {
 }

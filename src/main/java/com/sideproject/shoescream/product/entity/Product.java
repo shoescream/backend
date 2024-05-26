@@ -1,7 +1,7 @@
 package com.sideproject.shoescream.product.entity;
 
-import com.sideproject.shoescream.bid.entity.BuyingBid;
-import com.sideproject.shoescream.bid.entity.SellingBid;
+import com.sideproject.shoescream.bid.entity.Bid;
+import com.sideproject.shoescream.bid.entity.Deal;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,24 +39,24 @@ public class Product {
     @Column(name = "brand_image")
     private String brandImage;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductImage> images;
-
     @Column(name = "views")
     private Long views;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductImage> productImages;
+
     // 사이즈 별 ( + 사이즈 , 색깔 별 ) 최고 가격 최저 가격 중복 처리 필수
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private Set<ProductOption> productOption;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<SellingBid> sellingBids;
+    private List<Bid> bids;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<BuyingBid> buyingBids;
+    private List<Deal> deals;
 
     protected Product() {
 

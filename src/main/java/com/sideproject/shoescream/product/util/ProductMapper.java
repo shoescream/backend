@@ -1,10 +1,20 @@
 package com.sideproject.shoescream.product.util;
 
+import com.sideproject.shoescream.bid.constant.BidType;
+import com.sideproject.shoescream.bid.constant.DealStatus;
+import com.sideproject.shoescream.bid.dto.response.BuyingBidResponse;
+import com.sideproject.shoescream.bid.dto.response.DealResponse;
+import com.sideproject.shoescream.bid.dto.response.SellingBidResponse;
+import com.sideproject.shoescream.bid.entity.Bid;
+import com.sideproject.shoescream.bid.entity.Deal;
+import com.sideproject.shoescream.bid.util.BidMapper;
+import com.sideproject.shoescream.bid.util.DealMapper;
 import com.sideproject.shoescream.product.dto.response.*;
 import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.entity.ProductImage;
 import com.sideproject.shoescream.product.entity.ProductOption;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,9 +54,31 @@ public class ProductMapper {
     public static ProductDetailResponse toProductDetailResponse(Product product) {
         List<ProductOption> productOption = product.getProductOption().stream()
                 .toList();
+        List<DealResponse> deals = product.getDeals().stream()
+                .filter(deal -> deal.getDealStatus().equals(DealStatus.SUCCESS_DEAL))
+                .sorted(Comparator.comparing(Deal::getTradedAt).reversed())
+                .map(DealMapper::toDealResponse)
+                .limit(10)
+                .toList();
+        List<SellingBidResponse> sellingBidResponses = product.getBids().stream()
+                .filter(bid -> bid.getBidType().equals(BidType.SELL_BID))
+                .sorted(Comparator.comparing(Bid::getCreatedAt).reversed())
+                .map(BidMapper::toSellingBidResponse)
+                .limit(10)
+                .toList();
+        List<BuyingBidResponse> buyingBidResponses = product.getBids().stream()
+                .filter(bid -> bid.getBidType().equals(BidType.BUY_BID))
+                .sorted(Comparator.comparing(Bid::getCreatedAt).reversed())
+                .map(BidMapper::toBuyingBidResponse)
+                .limit(10)
+                .toList();
+
         return ProductDetailResponse.builder()
                 .productResponse(toProductResponse(product))
                 .productOptionResponse(toProductOptionResponse(productOption))
+                .dealResponse(deals)
+                .sellingBidResponse(sellingBidResponses)
+                .buyingBidResponse(buyingBidResponses)
                 .build();
     }
 
@@ -61,7 +93,7 @@ public class ProductMapper {
     }
 
     public static ProductImageResponse toProductImageResponse(Product product) {
-        List<String> imageUrls = product.getImages().stream()
+        List<String> imageUrls = product.getProductImages().stream()
                 .map(ProductImage::getProductImage)
                 .toList();
 
