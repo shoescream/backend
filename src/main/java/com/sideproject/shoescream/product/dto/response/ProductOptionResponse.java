@@ -2,9 +2,15 @@ package com.sideproject.shoescream.product.dto.response;
 
 import lombok.Builder;
 
-import java.util.List;
+import java.util.Map;
 
 @Builder
 public record ProductOptionResponse(
-        List<String> size) {
+        Map<String, Integer> sizeAndPriceBuyInfo,
+        Map<String, Integer> sizeAndPriceSellInfo,
+
+        int maxSellInfo,
+
+        int minBuyInfo
+) {
 }
