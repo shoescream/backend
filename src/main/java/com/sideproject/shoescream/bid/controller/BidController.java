@@ -2,10 +2,7 @@ package com.sideproject.shoescream.bid.controller;
 
 import com.sideproject.shoescream.bid.dto.request.BuyingBidRequest;
 import com.sideproject.shoescream.bid.dto.request.SellingBidRequest;
-import com.sideproject.shoescream.bid.dto.response.BuyingBidResponse;
-import com.sideproject.shoescream.bid.dto.response.BuyingProductInfoResponse;
-import com.sideproject.shoescream.bid.dto.response.SellingBidResponse;
-import com.sideproject.shoescream.bid.dto.response.SellingProductInfoResponse;
+import com.sideproject.shoescream.bid.dto.response.*;
 import com.sideproject.shoescream.bid.service.BidService;
 import com.sideproject.shoescream.global.dto.response.Response;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +32,10 @@ public class BidController {
     @PostMapping("/buy-bid")
     public Response<BuyingBidResponse> buyingBid(@RequestBody BuyingBidRequest buyingBidRequest) {
         return Response.success(bidService.buyingBid(buyingBidRequest));
+    }
+
+    @GetMapping("/bid-history")
+    public Response<BidHistoryResponse> getBidHistory(@RequestParam String productNumber, @RequestParam String size) {
+        return Response.success(bidService.getBidHistory(productNumber, size));
     }
 }

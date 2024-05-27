@@ -3,12 +3,10 @@ package com.sideproject.shoescream.bid.service;
 import com.sideproject.shoescream.bid.constant.BidType;
 import com.sideproject.shoescream.bid.dto.request.BuyingBidRequest;
 import com.sideproject.shoescream.bid.dto.request.SellingBidRequest;
-import com.sideproject.shoescream.bid.dto.response.BuyingBidResponse;
-import com.sideproject.shoescream.bid.dto.response.BuyingProductInfoResponse;
-import com.sideproject.shoescream.bid.dto.response.SellingBidResponse;
-import com.sideproject.shoescream.bid.dto.response.SellingProductInfoResponse;
+import com.sideproject.shoescream.bid.dto.response.*;
 import com.sideproject.shoescream.bid.repository.BidRepository;
 import com.sideproject.shoescream.bid.util.BidMapper;
+import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.entity.ProductOption;
 import com.sideproject.shoescream.product.repository.ProductImageRepository;
 import com.sideproject.shoescream.product.repository.ProductOptionRepository;
@@ -65,5 +63,12 @@ public class BidService {
         return BidMapper.toBuyingBidResponse(bidRepository.save(
                 BidMapper.toBuyingBid(
                         buyingBidRequest, productOption, BidType.BUY_BID)));
+    }
+
+    public BidHistoryResponse getBidHistory(String productNumber, String size) {
+        Product product = productRepository.findById(Long.valueOf(productNumber))
+                .orElseThrow(() -> new RuntimeException());
+
+        return BidMapper.toBidHistoryResponse(product, size);
     }
 }

@@ -10,10 +10,6 @@ import java.util.List;
 @Builder
 public record ProductDetailResponse(
         ProductResponse productResponse,
-        ProductOptionResponse productOptionResponse,
-        List<DealResponse> dealResponse,
-        List<SellingBidResponse> sellingBidResponse,
-        List<BuyingBidResponse> buyingBidResponse
-
+        ProductOptionResponse productOptionResponse
 ) {
 }

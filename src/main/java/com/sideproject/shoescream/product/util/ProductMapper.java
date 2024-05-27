@@ -54,31 +54,10 @@ public class ProductMapper {
     public static ProductDetailResponse toProductDetailResponse(Product product) {
         List<ProductOption> productOption = product.getProductOption().stream()
                 .toList();
-        List<DealResponse> deals = product.getDeals().stream()
-                .filter(deal -> deal.getDealStatus().equals(DealStatus.SUCCESS_DEAL))
-                .sorted(Comparator.comparing(Deal::getTradedAt).reversed())
-                .map(DealMapper::toDealResponse)
-                .limit(10)
-                .toList();
-        List<SellingBidResponse> sellingBidResponses = product.getBids().stream()
-                .filter(bid -> bid.getBidType().equals(BidType.SELL_BID))
-                .sorted(Comparator.comparing(Bid::getCreatedAt).reversed())
-                .map(BidMapper::toSellingBidResponse)
-                .limit(10)
-                .toList();
-        List<BuyingBidResponse> buyingBidResponses = product.getBids().stream()
-                .filter(bid -> bid.getBidType().equals(BidType.BUY_BID))
-                .sorted(Comparator.comparing(Bid::getCreatedAt).reversed())
-                .map(BidMapper::toBuyingBidResponse)
-                .limit(10)
-                .toList();
 
         return ProductDetailResponse.builder()
                 .productResponse(toProductResponse(product))
                 .productOptionResponse(toProductOptionResponse(productOption))
-                .dealResponse(deals)
-                .sellingBidResponse(sellingBidResponses)
-                .buyingBidResponse(buyingBidResponses)
                 .build();
     }
 
@@ -88,6 +67,8 @@ public class ProductMapper {
                 .productCode(product.getProductCode())
                 .productName(product.getProductName())
                 .productSubName(product.getProductSubName())
+                .brandName(product.getBrandName())
+                .price(product.getPrice())
                 .productImageResponse(toProductImageResponse(product))
                 .build();
     }

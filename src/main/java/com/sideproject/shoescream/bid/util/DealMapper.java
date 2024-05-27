@@ -1,8 +1,11 @@
 package com.sideproject.shoescream.bid.util;
 
+import com.sideproject.shoescream.bid.constant.DealStatus;
+import com.sideproject.shoescream.bid.dto.response.DealHistoryResponse;
 import com.sideproject.shoescream.bid.dto.response.DealResponse;
 import com.sideproject.shoescream.bid.dto.response.QuoteResponse;
 import com.sideproject.shoescream.bid.entity.Deal;
+import com.sideproject.shoescream.product.entity.Product;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -41,6 +44,18 @@ public class DealMapper {
                 .build();
     }
 
+    public static DealHistoryResponse toDealHistoryResponse(Product product, String size) {
+        if ("allSize".equals(size)) {
+            return DealHistoryResponse.builder()
+                    .dealResponse(aggregateDealResponse(product, size))
+                    .build();
+        }
+
+        return DealHistoryResponse.builder()
+                .dealResponse(aggregateDealResponseForSpecificSize(product, size))
+                .build();
+    }
+
     private static LinkedHashMap<LocalDate, Integer> aggregateQuote(Stream<Deal> dealStream) {
         return dealStream
                 .collect(Collectors.groupingBy(
@@ -60,5 +75,24 @@ public class DealMapper {
                         Collectors.collectingAndThen(
                                 Collectors.maxBy(Comparator.comparing(deal -> deal.getTradedAt().toLocalTime())),
                                 latestDeal -> latestDeal.map(Deal::getPrice).orElse(0))));
+    }
+
+    public static List<DealResponse> aggregateDealResponse(Product product, String size) {
+        return product.getDeals().stream()
+                .filter(deal -> deal.getDealStatus().equals(DealStatus.SUCCESS_DEAL))
+                .sorted(Comparator.comparing(Deal::getTradedAt).reversed())
+                .map(DealMapper::toDealResponse)
+                .limit(5)
+                .toList();
+    }
+
+    public static List<DealResponse> aggregateDealResponseForSpecificSize(Product product, String size) {
+        return product.getDeals().stream()
+                .filter(deal -> deal.getDealStatus().equals(DealStatus.SUCCESS_DEAL))
+                .filter(deal -> deal.getSize().equals(size))
+                .sorted(Comparator.comparing(Deal::getTradedAt).reversed())
+                .map(DealMapper::toDealResponse)
+                .limit(5)
+                .toList();
     }
 }

@@ -4,14 +4,14 @@ import com.sideproject.shoescream.bid.constant.BidStatus;
 import com.sideproject.shoescream.bid.constant.BidType;
 import com.sideproject.shoescream.bid.dto.request.BuyingBidRequest;
 import com.sideproject.shoescream.bid.dto.request.SellingBidRequest;
-import com.sideproject.shoescream.bid.dto.response.BuyingBidResponse;
-import com.sideproject.shoescream.bid.dto.response.BuyingProductInfoResponse;
-import com.sideproject.shoescream.bid.dto.response.SellingBidResponse;
-import com.sideproject.shoescream.bid.dto.response.SellingProductInfoResponse;
+import com.sideproject.shoescream.bid.dto.response.*;
 import com.sideproject.shoescream.bid.entity.Bid;
+import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.entity.ProductOption;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 
 public class BidMapper {
 
@@ -40,10 +40,10 @@ public class BidMapper {
 
     public static SellingBidResponse toSellingBidResponse(Bid bid) {
         return SellingBidResponse.builder()
-                .productCode(bid.getProduct().getProductCode())
                 .size(bid.getSize())
                 .price(bid.getBidPrice())
                 .quantity(1)
+                .createdAt(bid.getCreatedAt())
                 .build();
     }
 
@@ -72,10 +72,62 @@ public class BidMapper {
 
     public static BuyingBidResponse toBuyingBidResponse(Bid bid) {
         return BuyingBidResponse.builder()
-                .productCode(bid.getProduct().getProductCode())
                 .size(bid.getSize())
                 .price(bid.getBidPrice())
                 .quantity(1)
+                .createdAt(bid.getCreatedAt())
                 .build();
     }
+
+    public static BidHistoryResponse toBidHistoryResponse(Product product, String size) {
+        if ("allSize".equals(size)) {
+            return BidHistoryResponse.builder()
+                    .buyingBidResponse(aggregateBuyingBidResponse(product, size))
+                    .sellingBidResponse(aggregateSellBidResponse(product, size))
+                    .build();
+        }
+        return BidHistoryResponse.builder()
+                .buyingBidResponse(aggregateBuyingBidResponseForSpecificSize(product, size))
+                .sellingBidResponse(aggregateSellBidResponseForSpecificSize(product, size))
+                .build();
+    }
+
+    private static List<BuyingBidResponse> aggregateBuyingBidResponse(Product product, String size) {
+        return product.getBids().stream()
+                .filter(bid -> bid.getBidType().equals(BidType.BUY_BID))
+                .sorted(Comparator.comparing(Bid::getCreatedAt).reversed())
+                .map(BidMapper::toBuyingBidResponse)
+                .limit(5)
+                .toList();
+    }
+
+    private static List<SellingBidResponse> aggregateSellBidResponse(Product product, String size) {
+        return product.getBids().stream()
+                .filter(bid -> bid.getBidType().equals(BidType.SELL_BID))
+                .sorted(Comparator.comparing(Bid::getCreatedAt).reversed())
+                .map(BidMapper::toSellingBidResponse)
+                .limit(5)
+                .toList();
+    }
+
+    private static List<BuyingBidResponse> aggregateBuyingBidResponseForSpecificSize(Product product, String size) {
+        return product.getBids().stream()
+                .filter(bid -> bid.getBidType().equals(BidType.BUY_BID))
+                .filter(bid -> bid.getSize().equals(size))
+                .sorted(Comparator.comparing(Bid::getCreatedAt).reversed())
+                .map(BidMapper::toBuyingBidResponse)
+                .limit(5)
+                .toList();
+    }
+
+    private static List<SellingBidResponse> aggregateSellBidResponseForSpecificSize(Product product, String size) {
+        return product.getBids().stream()
+                .filter(bid -> bid.getBidType().equals(BidType.SELL_BID))
+                .filter(bid -> bid.getSize().equals(size))
+                .sorted(Comparator.comparing(Bid::getCreatedAt).reversed())
+                .map(BidMapper::toSellingBidResponse)
+                .limit(5)
+                .toList();
+    }
+
 }
