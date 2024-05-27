@@ -1,20 +1,10 @@
 package com.sideproject.shoescream.product.util;
 
-import com.sideproject.shoescream.bid.constant.BidType;
-import com.sideproject.shoescream.bid.constant.DealStatus;
-import com.sideproject.shoescream.bid.dto.response.BuyingBidResponse;
-import com.sideproject.shoescream.bid.dto.response.DealResponse;
-import com.sideproject.shoescream.bid.dto.response.SellingBidResponse;
-import com.sideproject.shoescream.bid.entity.Bid;
-import com.sideproject.shoescream.bid.entity.Deal;
-import com.sideproject.shoescream.bid.util.BidMapper;
-import com.sideproject.shoescream.bid.util.DealMapper;
 import com.sideproject.shoescream.product.dto.response.*;
 import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.entity.ProductImage;
 import com.sideproject.shoescream.product.entity.ProductOption;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
