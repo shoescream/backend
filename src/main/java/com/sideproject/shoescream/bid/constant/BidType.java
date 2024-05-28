@@ -1,8 +1,18 @@
 package com.sideproject.shoescream.bid.constant;
 
+import lombok.Getter;
+
+@Getter
 public enum BidType {
-    SELL_BID,
-    SELL_NOW,
-    BUY_BID,
-    BUY_NOW
+    SELL_BID("sellBid"),
+    SELL_NOW("sellNow"),
+    BUY_BID("buyBid"),
+    BUY_NOW("buyNow");
+
+    private final String bidType;
+
+    BidType(String bidType) {
+        this.bidType = bidType;
+    }
+
 }
