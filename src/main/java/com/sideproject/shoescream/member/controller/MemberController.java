@@ -7,10 +7,18 @@ import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
 import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
+import com.sideproject.shoescream.member.dto.response.MyBuyingHistoryResponse;
+import com.sideproject.shoescream.member.dto.response.MySellingHistoryResponse;
 import com.sideproject.shoescream.member.service.EmailService;
 import com.sideproject.shoescream.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,5 +60,24 @@ public class MemberController {
     @PostMapping("/signin/find-password")
     public Response<String> findMemberPassword(@RequestBody MemberFindMemberInfoRequest memberFindMemberInfoRequest) {
         return Response.success(emailService.sendRandomPasswordMail(memberFindMemberInfoRequest));
+    }
+
+    @GetMapping("/my/buying")
+    public Response<List<MyBuyingHistoryResponse>> getMyBuyingHistory(
+            @RequestParam String status,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            Authentication authentication) {
+        return Response.success(memberService.getMyBuyingHistory(status, startDate, endDate, authentication));
+    }
+
+    @GetMapping("/my/selling")
+    public Response<List<MySellingHistoryResponse>> getMySellingHistory(
+            @RequestParam String status,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            Authentication authentication) {
+        return Response.success(memberService.getMySellingHistory(status, startDate, endDate, authentication));
+
     }
 }

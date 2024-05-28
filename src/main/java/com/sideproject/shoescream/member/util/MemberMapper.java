@@ -1,10 +1,15 @@
 package com.sideproject.shoescream.member.util;
 
+import com.sideproject.shoescream.bid.entity.Bid;
+import com.sideproject.shoescream.bid.entity.Deal;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
-import com.sideproject.shoescream.member.dto.response.MemberResponse;
-import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
-import com.sideproject.shoescream.member.dto.response.TokenResponse;
+import com.sideproject.shoescream.member.dto.response.*;
 import com.sideproject.shoescream.member.entity.Member;
+import com.sideproject.shoescream.product.entity.Product;
+import com.sideproject.shoescream.product.util.ProductMapper;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MemberMapper {
 
@@ -37,6 +42,76 @@ public class MemberMapper {
         return MemberSignInResponse.builder()
                 .memberResponse(memberResponse)
                 .tokenResponse(tokenResponse)
+                .build();
+    }
+
+    public static MyBuyingHistoryResponse toMyBuyingBidHistoryResponse(Bid myBid) {
+        return MyBuyingHistoryResponse.builder()
+                .productName(myBid.getProduct().getProductName())
+                .productImage(myBid.getProduct().getProductImages().get(0).getProductImage())
+                .price(myBid.getBidPrice())
+                .size(myBid.getSize())
+                .createdAt(myBid.getCreatedAt())
+                .deadLine(myBid.getBidDeadLine())
+                .type(myBid.getBidType().getBidType())
+                .status(myBid.getBidStatus().getBidStatus())
+                .build();
+    }
+
+    public static MyBuyingHistoryResponse toMyBuyingPendingDealHistoryResponse(Deal myDeal) {
+        return MyBuyingHistoryResponse.builder()
+                .productName(myDeal.getProduct().getProductName())
+                .productImage(myDeal.getProduct().getProductImages().get(0).getProductImage())
+                .price(myDeal.getPrice())
+                .size(myDeal.getSize())
+                .createdAt(myDeal.getCreatedAt())
+                .status(myDeal.getDealStatus().getDealStatus())
+                .build();
+    }
+
+    public static MyBuyingHistoryResponse toMyBuyingFinishedDealHistoryResponse(Deal myDeal) {
+        return MyBuyingHistoryResponse.builder()
+                .productName(myDeal.getProduct().getProductName())
+                .productImage(myDeal.getProduct().getProductImages().get(0).getProductImage())
+                .price(myDeal.getPrice())
+                .size(myDeal.getSize())
+                .tradedAt(myDeal.getTradedAt())
+                .status(myDeal.getDealStatus().getDealStatus())
+                .build();
+    }
+
+    public static MySellingHistoryResponse toMySellingBidHistoryResponse(Bid myBid) {
+        return MySellingHistoryResponse.builder()
+                .productName(myBid.getProduct().getProductName())
+                .productImage(myBid.getProduct().getProductImages().get(0).getProductImage())
+                .price(myBid.getBidPrice())
+                .size(myBid.getSize())
+                .createdAt(myBid.getCreatedAt())
+                .deadLine(myBid.getBidDeadLine())
+                .type(myBid.getBidType().getBidType())
+                .status(myBid.getBidStatus().getBidStatus())
+                .build();
+    }
+
+    public static MySellingHistoryResponse toMySellingPendingDealHistoryResponse(Deal myDeal) {
+        return MySellingHistoryResponse.builder()
+                .productName(myDeal.getProduct().getProductName())
+                .productImage(myDeal.getProduct().getProductImages().get(0).getProductImage())
+                .price(myDeal.getPrice())
+                .size(myDeal.getSize())
+                .createdAt(myDeal.getCreatedAt())
+                .status(myDeal.getDealStatus().getDealStatus())
+                .build();
+    }
+
+    public static MySellingHistoryResponse toMySellingFinishedDealHistoryResponse(Deal myDeal) {
+        return MySellingHistoryResponse.builder()
+                .productName(myDeal.getProduct().getProductName())
+                .productImage(myDeal.getProduct().getProductImages().get(0).getProductImage())
+                .price(myDeal.getPrice())
+                .size(myDeal.getSize())
+                .tradedAt(myDeal.getTradedAt())
+                .status(myDeal.getDealStatus().getDealStatus())
                 .build();
     }
 }
