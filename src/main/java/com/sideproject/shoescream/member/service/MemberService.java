@@ -193,8 +193,8 @@ public class MemberService implements UserDetailsService {
         }
 
         return myPendingHistory.stream()
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.WAITING_TRANSFER.getDealStatus()))
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_TRANSFER.getDealStatus()))
+                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.WAITING_DEPOSIT.getDealStatus()))
+                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_DEPOSIT.getDealStatus()))
                 .filter(deal -> deal.getCreatedAt().toLocalDate().isAfter(startDate) &&
                         deal.getCreatedAt().toLocalDate().isBefore(endDate))
                 .toList();
