@@ -4,10 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum BidType {
-    SELL_BID("sellBid"),
-    SELL_NOW("sellNow"),
-    BUY_BID("buyBid"),
-    BUY_NOW("buyNow");
+
+    SELL_BID("sell_bid"),
+    SELL_NOW("sell_now"),
+    BUY_BID("buy_bid"),
+    BUY_NOW("buy_now");
 
     private final String bidType;
 
@@ -15,4 +16,4 @@ public enum BidType {
         this.bidType = bidType;
     }
 
-}
+    }

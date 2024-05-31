@@ -23,13 +23,15 @@ public class Deal {
     @Column(name = "deal_number")
     private long id;
 
+    @Column(name = "buyer_number")
+    private long buyerNumber;
+
+    @Column(name = "seller_number")
+    private long sellerNumber;
+
     @ManyToOne
     @JoinColumn(name = "product_number")
     private Product product;
-
-    @ManyToOne
-    @JoinColumn(name = "member_number")
-    private Member member;
 
     @Column(name = "deal_size")
     private String size;

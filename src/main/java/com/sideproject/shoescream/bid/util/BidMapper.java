@@ -6,6 +6,7 @@ import com.sideproject.shoescream.bid.dto.request.BuyingBidRequest;
 import com.sideproject.shoescream.bid.dto.request.SellingBidRequest;
 import com.sideproject.shoescream.bid.dto.response.*;
 import com.sideproject.shoescream.bid.entity.Bid;
+import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.entity.ProductOption;
 
@@ -25,10 +26,11 @@ public class BidMapper {
                 .build();
     }
 
-    public static Bid toSellingBid(SellingBidRequest sellingBidRequest, ProductOption productOption, BidType bidType) {
+    public static Bid toSellingBid(SellingBidRequest sellingBidRequest, Member member, ProductOption productOption, BidType bidType) {
         LocalDateTime now = LocalDateTime.now();
         return Bid.builder()
                 .product(productOption.getProduct())
+                .member(member)
                 .size(sellingBidRequest.size())
                 .bidPrice(sellingBidRequest.price())
                 .createdAt(now)
@@ -57,10 +59,11 @@ public class BidMapper {
                 .build();
     }
 
-    public static Bid toBuyingBid(BuyingBidRequest buyingBidRequest, ProductOption productOption, BidType bidType) {
+    public static Bid toBuyingBid(BuyingBidRequest buyingBidRequest, Member member, ProductOption productOption, BidType bidType) {
         LocalDateTime now = LocalDateTime.now();
         return Bid.builder()
                 .product(productOption.getProduct())
+                .member(member)
                 .size(buyingBidRequest.size())
                 .bidPrice(buyingBidRequest.price())
                 .createdAt(now)

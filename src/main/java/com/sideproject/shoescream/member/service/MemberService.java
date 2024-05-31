@@ -130,18 +130,18 @@ public class MemberService implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException());
 
         if (status.equals("bidding")) {
-            List<Bid> buyingBids = filterMyBuyingBiddingByDateRange(startDate, endDate, member);
+            List<Bid> buyingBids = filterMyBiddingByDateRange(startDate, endDate, member, BidType.BUY_BID.getBidType());
             return buyingBids.stream()
                     .map(MemberMapper::toMyBuyingBidHistoryResponse)
                     .collect(Collectors.toList());
         } else if (status.equals("pending")) {
-            List<Deal> pendingDeals = filterMyBuyingPendingByDateRange(startDate, endDate, member);
+            List<Deal> pendingDeals = filterMyPendingByDateRange(startDate, endDate, member);
             return pendingDeals.stream()
                     .map(MemberMapper::toMyBuyingPendingDealHistoryResponse)
                     .collect(Collectors.toList());
         }
 
-        return filterMyBuyingFinishedByDateRange(startDate, endDate, member).stream()
+        return filterMyFinishedByDateRange(startDate, endDate, member).stream()
                 .map(MemberMapper::toMyBuyingFinishedDealHistoryResponse)
                 .collect(Collectors.toList());
     }
@@ -151,91 +151,39 @@ public class MemberService implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException());
 
         if (status.equals("bidding")) {
-            List<Bid> sellingBids = filterMySellingBiddingByDateRange(startDate, endDate, member);
+            List<Bid> sellingBids = filterMyBiddingByDateRange(startDate, endDate, member, BidType.SELL_BID.getBidType());
             return sellingBids.stream()
                     .map(MemberMapper::toMySellingBidHistoryResponse)
                     .collect(Collectors.toList());
         } else if (status.equals("pending")) {
-            List<Deal> pendingDeals = filterMySellingPendingByDateRange(startDate, endDate, member);
+            List<Deal> pendingDeals = filterMyPendingByDateRange(startDate, endDate, member);
             return pendingDeals.stream()
                     .map(MemberMapper::toMySellingPendingDealHistoryResponse)
                     .collect(Collectors.toList());
         }
-        return filterMySellingFinishedByDateRange(startDate, endDate, member).stream()
+        return filterMyFinishedByDateRange(startDate, endDate, member).stream()
                 .map(MemberMapper::toMySellingFinishedDealHistoryResponse)
                 .collect(Collectors.toList());
     }
 
-    private List<Bid> filterMyBuyingBiddingByDateRange(LocalDate startDate, LocalDate endDate, Member member) {
+    private List<Bid> filterMyBiddingByDateRange(LocalDate startDate, LocalDate endDate, Member member, String bidType) {
         List<Bid> myBiddingHistory = bidRepository.findByMemberNumber(member.getMemberNumber());
         if (startDate == null & endDate == null) {
             return myBiddingHistory.stream()
-                    .filter(bid -> bid.getBidType().getBidType().equals(BidType.BUY_BID.getBidType()))
+                    .filter(bid -> bid.getBidType().getBidType().equals(bidType))
                     .filter(bid -> bid.getBidStatus().getBidStatus().equals(BidStatus.WAITING_MATCHING.getBidStatus()))
                     .toList();
         }
 
         return myBiddingHistory.stream()
-                .filter(bid -> bid.getBidType().getBidType().equals(BidType.BUY_BID.getBidType()))
+                .filter(bid -> bid.getBidType().getBidType().equals(bidType))
                 .filter(bid -> bid.getBidStatus().getBidStatus().equals(BidStatus.WAITING_MATCHING.getBidStatus()))
                 .filter(bid -> bid.getCreatedAt().toLocalDate().isAfter(startDate) &&
                         bid.getCreatedAt().toLocalDate().isBefore(endDate))
                 .toList();
     }
 
-
-    private List<Deal> filterMyBuyingPendingByDateRange(LocalDate startDate, LocalDate endDate, Member member) {
-        List<Deal> myPendingHistory = dealRepository.findByMemberNumber(member.getMemberNumber());
-        if (startDate == null && endDate == null) {
-            return myPendingHistory.stream()
-                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.WAITING_DEPOSIT.getDealStatus()))
-                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_DEPOSIT.getDealStatus()))
-                    .toList();
-        }
-
-        return myPendingHistory.stream()
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.WAITING_TRANSFER.getDealStatus()))
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_TRANSFER.getDealStatus()))
-                .filter(deal -> deal.getCreatedAt().toLocalDate().isAfter(startDate) &&
-                        deal.getCreatedAt().toLocalDate().isBefore(endDate))
-                .toList();
-    }
-
-    private List<Deal> filterMyBuyingFinishedByDateRange(LocalDate startDate, LocalDate endDate, Member member) {
-        List<Deal> myFinishedHistory = dealRepository.findByMemberNumber(member.getMemberNumber());
-        if (startDate == null && endDate == null) {
-            return myFinishedHistory.stream()
-                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.SUCCESS_DEAL.getDealStatus()))
-                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.FAIL_DEAL.getDealStatus()))
-                    .toList();
-        }
-
-        return myFinishedHistory.stream()
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.SUCCESS_DEAL.getDealStatus()))
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.FAIL_DEAL.getDealStatus()))
-                .filter(deal -> deal.getTradedAt().toLocalDate().isAfter(startDate) &&
-                        deal.getTradedAt().toLocalDate().isBefore(endDate))
-                .toList();
-    }
-
-    private List<Bid> filterMySellingBiddingByDateRange(LocalDate startDate, LocalDate endDate, Member member) {
-        List<Bid> myBiddingHistory = bidRepository.findByMemberNumber(member.getMemberNumber());
-        if (startDate == null & endDate == null) {
-            return myBiddingHistory.stream()
-                    .filter(bid -> bid.getBidType().getBidType().equals(BidType.SELL_BID.getBidType()))
-                    .filter(bid -> bid.getBidStatus().getBidStatus().equals(BidStatus.WAITING_MATCHING.getBidStatus()))
-                    .toList();
-        }
-
-        return myBiddingHistory.stream()
-                .filter(bid -> bid.getBidType().getBidType().equals(BidType.SELL_BID.getBidType()))
-                .filter(bid -> bid.getBidStatus().getBidStatus().equals(BidStatus.WAITING_MATCHING.getBidStatus()))
-                .filter(bid -> bid.getCreatedAt().toLocalDate().isAfter(startDate) &&
-                        bid.getCreatedAt().toLocalDate().isBefore(endDate))
-                .toList();
-    }
-
-    private List<Deal> filterMySellingPendingByDateRange(LocalDate startDate, LocalDate endDate, Member member) {
+    private List<Deal> filterMyPendingByDateRange(LocalDate startDate, LocalDate endDate, Member member) {
         List<Deal> myPendingHistory = dealRepository.findByMemberNumber(member.getMemberNumber());
         if (startDate == null && endDate == null) {
             return myPendingHistory.stream()
@@ -252,7 +200,7 @@ public class MemberService implements UserDetailsService {
                 .toList();
     }
 
-    private List<Deal> filterMySellingFinishedByDateRange(LocalDate startDate, LocalDate endDate, Member member) {
+    private List<Deal> filterMyFinishedByDateRange(LocalDate startDate, LocalDate endDate, Member member) {
         List<Deal> myFinishedHistory = dealRepository.findByMemberNumber(member.getMemberNumber());
         if (startDate == null && endDate == null) {
             return myFinishedHistory.stream()
