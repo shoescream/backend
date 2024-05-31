@@ -5,8 +5,10 @@ import lombok.Getter;
 @Getter
 public enum BidType {
 
-    SELL_BID("sellBid"),
-    BUY_BID("buyBid");
+    SELL_BID("sell_bid"),
+    SELL_NOW("sell_now"),
+    BUY_BID("buy_bid"),
+    BUY_NOW("buy_now");
 
     private final String bidType;
 

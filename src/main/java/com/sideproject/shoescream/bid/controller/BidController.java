@@ -6,6 +6,7 @@ import com.sideproject.shoescream.bid.dto.response.*;
 import com.sideproject.shoescream.bid.service.BidService;
 import com.sideproject.shoescream.global.dto.response.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,25 +15,26 @@ public class BidController {
 
     private final BidService bidService;
 
+    @GetMapping("/buy/{productNumber}")
+    public Response<BuyingProductInfoResponse> getBuyingProductInfo(@PathVariable Long productNumber, @RequestParam String size, Authentication authentication) {
+        return Response.success(bidService.getBuyingProductInfo(productNumber, size, authentication));
+    }
+
+    @PostMapping("/buy")
+    public Response<BuyingBidResponse> buyingBid(@RequestBody BuyingBidRequest buyingBidRequest, Authentication authentication) {
+        return Response.success(bidService.buyingBid(buyingBidRequest, authentication));
+    }
+
     @GetMapping("/sell/{productNumber}")
     public Response<SellingProductInfoResponse> getSellingProductInfo(@PathVariable Long productNumber, @RequestParam String size) {
         return Response.success(bidService.getSellingProductInfo(productNumber, size));
     }
 
-    @PostMapping("/sell-bid")
-    public Response<SellingBidResponse> sellingBid(@RequestBody SellingBidRequest sellingBidRequest) {
-        return Response.success(bidService.sellingBid(sellingBidRequest));
+    @PostMapping("/sell")
+    public Response<SellingBidResponse> sellingBid(@RequestBody SellingBidRequest sellingBidRequest, Authentication authentication) {
+        return Response.success(bidService.sellingBid(sellingBidRequest, authentication));
     }
 
-    @GetMapping("/buy/{productNumber}")
-    public Response<BuyingProductInfoResponse> getBuyingProductInfo(@PathVariable Long productNumber, @RequestParam String size) {
-        return Response.success(bidService.getBuyingProductInfo(productNumber, size));
-    }
-
-    @PostMapping("/buy-bid")
-    public Response<BuyingBidResponse> buyingBid(@RequestBody BuyingBidRequest buyingBidRequest) {
-        return Response.success(bidService.buyingBid(buyingBidRequest));
-    }
 
     @GetMapping("/bid-history")
     public Response<BidHistoryResponse> getBidHistory(@RequestParam String productNumber, @RequestParam String size) {

@@ -11,6 +11,6 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
 
     List<Deal> findByProductId(Long productNumber);
 
-    @Query("select d from Deal d where d.member.memberNumber = :memberNumber")
+    @Query("select d from Deal d where d.buyerNumber=:memberNumber or d.sellerNumber=:memberNumber")
     List<Deal> findByMemberNumber(@Param("memberNumber") Long memberNumber);
 }

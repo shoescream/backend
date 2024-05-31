@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum DealStatus {
-    WAITING_DEPOSIT("pending"),
-    COMPLETE_DEPOSIT("pending"),
-    FAIL_DEAL("finishing"),
-    SUCCESS_DEAL("finishing");
+    WAITING_DEPOSIT("waiting_deposit"),
+    COMPLETE_DEPOSIT("complete_deposit"),
+    FAIL_DEAL("fail_deal"),
+    SUCCESS_DEAL("success_deal");
 
     private final String dealStatus;
 

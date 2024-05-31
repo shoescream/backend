@@ -25,20 +25,20 @@ public class Bid {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "product_number")
+    @JoinColumn(name = "product_number", nullable = false)
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "member_number")
+    @JoinColumn(name = "member_number", nullable = false)
     private Member member;
 
-    @Column(name = "bid_product_size")
+    @Column(name = "bid_product_size", nullable = false)
     private String size;
 
-    @Column(name = "bid_price")
+    @Column(name = "bid_price", nullable = false)
     private int bidPrice;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "bid_deadline")
