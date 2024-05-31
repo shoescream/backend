@@ -6,8 +6,7 @@ import lombok.Getter;
 public enum BidStatus {
     WAITING_MATCHING("waitingMating"),
     COMPLETE_MATCHING("completeMating"),
-    NONE("none"),
-    CANCEL("cancle");
+    CANCEL("cancel");
 
     private final String bidStatus;
 

@@ -6,8 +6,6 @@ import lombok.Getter;
 public enum DealStatus {
     WAITING_DEPOSIT("pending"),
     COMPLETE_DEPOSIT("pending"),
-    WAITING_TRANSFER("pending"),
-    COMPLETE_TRANSFER("pending"),
     FAIL_DEAL("finishing"),
     SUCCESS_DEAL("finishing");
 
