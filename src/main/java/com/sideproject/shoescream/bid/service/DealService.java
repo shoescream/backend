@@ -20,7 +20,7 @@ public class DealService {
     private final ProductRepository productRepository;
 
     public QuoteResponse getQuote(String productNumber, String size, int period) {
-        List<Deal> deals = dealRepository.findByProductId(Long.valueOf(productNumber));
+        List<Deal> deals = dealRepository.findByProduct_ProductNumber(Long.valueOf(productNumber));
         return DealMapper.toQuoteResponse(deals, size, period);
     }
 
