@@ -61,7 +61,7 @@ public class BidService {
         Member member = memberRepository.findByMemberId(authentication.getName())
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         ProductOption productOption = productOptionRepository.findByProductIdAndSize(sellingBidRequest.productNumber(), sellingBidRequest.size());
-        Optional<Bid> buyBid = bidRepository.findTargetBidOne(productOption.getProduct().getId(), sellingBidRequest.price(), BidType.BUY_BID);
+        Optional<Bid> buyBid = bidRepository.findTargetBidOne(productOption.getProduct().getProductNumber(), sellingBidRequest.price(), BidType.BUY_BID);
 
         if (buyBid.isEmpty()) {
             return BidMapper.toSellingBidResponse(bidRepository.save(
@@ -79,7 +79,7 @@ public class BidService {
         Member member = memberRepository.findByMemberId(authentication.getName())
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         ProductOption productOption = productOptionRepository.findByProductIdAndSize(buyingBidRequest.productNumber(), buyingBidRequest.size());
-        Optional<Bid> sellBid = bidRepository.findTargetBidOne(productOption.getProduct().getId(), buyingBidRequest.price(), BidType.SELL_BID);
+        Optional<Bid> sellBid = bidRepository.findTargetBidOne(productOption.getProduct().getProductNumber(), buyingBidRequest.price(), BidType.SELL_BID);
 
         if (sellBid.isEmpty()) {
             return BidMapper.toBuyingBidResponse(bidRepository.save(
