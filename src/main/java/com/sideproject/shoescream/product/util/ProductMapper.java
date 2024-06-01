@@ -13,7 +13,7 @@ public class ProductMapper {
 
     public static ProductResponse toProductResponse(Product product) {
         return ProductResponse.builder()
-                .id(product.getId())
+                .id(product.getProductNumber())
                 .productCode(product.getProductCode())
                 .productName(product.getProductName())
                 .productSubName(product.getProductSubName())
@@ -53,7 +53,7 @@ public class ProductMapper {
 
     public static ProductRankingResponse toProductRankingResponse(Product product) {
         return ProductRankingResponse.builder()
-                .id(product.getId())
+                .id(product.getProductNumber())
                 .productCode(product.getProductCode())
                 .productName(product.getProductName())
                 .productSubName(product.getProductSubName())

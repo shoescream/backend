@@ -22,7 +22,7 @@ public class Bid {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bid_number")
-    private long id;
+    private long bidNumber;
 
     @ManyToOne
     @JoinColumn(name = "product_number", nullable = false)

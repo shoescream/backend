@@ -15,7 +15,7 @@ public class ProductOption {
     @Id
     @Column(name = "product_option_number")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long productOptionNumber;
 
     @Column(name = "product_size")
     private String size;
@@ -41,7 +41,7 @@ public class ProductOption {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductOption that = (ProductOption) o;
-        return Objects.equals(product.getId(), that.product.getId()) &&
+        return Objects.equals(product.getProductNumber(), that.product.getProductNumber()) &&
                 Objects.equals(size, that.size) &&
                 Objects.equals(lowestPrice, that.lowestPrice) &&
                 Objects.equals(highestPrice, that.highestPrice);
@@ -49,6 +49,6 @@ public class ProductOption {
 
     @Override
     public int hashCode() {
-        return Objects.hash(product.getId(), size, lowestPrice, highestPrice);
+        return Objects.hash(product.getProductNumber(), size, lowestPrice, highestPrice);
     }
 }

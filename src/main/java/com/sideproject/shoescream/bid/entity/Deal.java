@@ -21,7 +21,7 @@ public class Deal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "deal_number")
-    private long id;
+    private long dealNumber;
 
     @Column(name = "buyer_number")
     private long buyerNumber;
