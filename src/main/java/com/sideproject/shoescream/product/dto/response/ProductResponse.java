@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record ProductResponse(
-        Long id,
+        Long productNumber,
         String productCode,
         String productName,
         String productSubName,
