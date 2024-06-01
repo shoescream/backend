@@ -64,6 +64,7 @@ public class BidService {
         Optional<Bid> buyBid = bidRepository.findTargetBidOne(productOption.getProduct().getProductNumber(), sellingBidRequest.price(), BidType.BUY_BID);
 
         if (buyBid.isEmpty()) {
+            updateBuyNowPrice(productOption.getLowestPrice(), sellingBidRequest.price(), productOption);
             return BidMapper.toSellingBidResponse(bidRepository.save(
                     BidMapper.toSellingBid(
                             sellingBidRequest, member, productOption, BidType.SELL_BID)));
@@ -82,6 +83,7 @@ public class BidService {
         Optional<Bid> sellBid = bidRepository.findTargetBidOne(productOption.getProduct().getProductNumber(), buyingBidRequest.price(), BidType.SELL_BID);
 
         if (sellBid.isEmpty()) {
+            updateSellNowPrice(productOption.getHighestPrice(), buyingBidRequest.price(), productOption);
             return BidMapper.toBuyingBidResponse(bidRepository.save(
                     BidMapper.toBuyingBid(
                             buyingBidRequest, member, productOption, BidType.BUY_BID)));
@@ -90,5 +92,17 @@ public class BidService {
         sellBid.get().setBidStatus(BidStatus.COMPLETE_MATCHING);
         dealRepository.save(DealMapper.buyingBidToDeal(buyingBidRequest, productOption, sellBid.get(), member.getMemberNumber(), DealStatus.WAITING_DEPOSIT));
         return BidMapper.toBuyingBidResponse(BidMapper.toBuyingBid(buyingBidRequest, member, productOption, BidType.BUY_NOW));
+    }
+
+    private void updateSellNowPrice(int currentSellNowPrice, int buyBidPrice, ProductOption productOption) {
+        if (currentSellNowPrice < buyBidPrice) {
+            productOption.setHighestPrice(buyBidPrice);
+        }
+    }
+
+    private void updateBuyNowPrice(int currentBuyNowPrice, int sellBidPrice, ProductOption productOption) {
+        if (currentBuyNowPrice > sellBidPrice) {
+            productOption.setLowestPrice(sellBidPrice);
+        }
     }
 }
