@@ -187,14 +187,14 @@ public class MemberService implements UserDetailsService {
         List<Deal> myPendingHistory = dealRepository.findByMemberNumber(member.getMemberNumber());
         if (startDate == null && endDate == null) {
             return myPendingHistory.stream()
-                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.WAITING_DEPOSIT.getDealStatus()))
-                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_DEPOSIT.getDealStatus()))
+                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.WAITING_DEPOSIT.getDealStatus()) ||
+                            deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_DEPOSIT.getDealStatus()))
                     .toList();
         }
 
         return myPendingHistory.stream()
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.WAITING_DEPOSIT.getDealStatus()))
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_DEPOSIT.getDealStatus()))
+                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.WAITING_DEPOSIT.getDealStatus()) ||
+                        deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_DEPOSIT.getDealStatus()))
                 .filter(deal -> deal.getCreatedAt().toLocalDate().isAfter(startDate) &&
                         deal.getCreatedAt().toLocalDate().isBefore(endDate))
                 .toList();
@@ -204,14 +204,15 @@ public class MemberService implements UserDetailsService {
         List<Deal> myFinishedHistory = dealRepository.findByMemberNumber(member.getMemberNumber());
         if (startDate == null && endDate == null) {
             return myFinishedHistory.stream()
-                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.SUCCESS_DEAL.getDealStatus()))
-                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.FAIL_DEAL.getDealStatus()))
+                    // AND 조건이라 OR조건으로 바꾸기
+                    .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.SUCCESS_DEAL.getDealStatus()) ||
+                            deal.getDealStatus().getDealStatus().equals(DealStatus.FAIL_DEAL.getDealStatus()))
                     .toList();
         }
 
         return myFinishedHistory.stream()
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.SUCCESS_DEAL.getDealStatus()))
-                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.FAIL_DEAL.getDealStatus()))
+                .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.SUCCESS_DEAL.getDealStatus()) ||
+                        deal.getDealStatus().getDealStatus().equals(DealStatus.FAIL_DEAL.getDealStatus()))
                 .filter(deal -> deal.getTradedAt().toLocalDate().isAfter(startDate) &&
                         deal.getTradedAt().toLocalDate().isBefore(endDate))
                 .toList();
