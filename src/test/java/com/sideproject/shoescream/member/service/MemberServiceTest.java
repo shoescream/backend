@@ -1,9 +1,13 @@
 package com.sideproject.shoescream.member.service;
 
+import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
+import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
 import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.repository.MemberRepository;
+import com.sideproject.shoescream.member.util.JwtTokenUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
@@ -27,6 +33,9 @@ class MemberServiceTest {
 
     @Mock
     private BCryptPasswordEncoder encoder;
+
+    @Mock
+    private JwtTokenUtil jwtTokenUtil;
 
     @DisplayName("회원 정보를 입력하면, 새로운 회원 정보를 저장하여 가입시키고 해당 회원 데이터를 리턴한다.")
     @Test
@@ -46,6 +55,20 @@ class MemberServiceTest {
                 .hasFieldOrPropertyWithValue("email", member.getEmail())
                 .hasFieldOrPropertyWithValue("profileImage", member.getProfileImage())
                 .hasFieldOrPropertyWithValue("name", member.getName());
+    }
+
+    @DisplayName("로그인이 정상동작 한다.")
+    @Test
+    void givenMemberParams_whenSignIn_thenLoginMember() {
+        // Given
+        Member member = createMember("wnsdhqo");
+        given(encoder.matches(any(), any())).willReturn(true);
+
+        when(memberRepository.findByMemberId(member.getMemberId())).thenReturn(Optional.of(member));
+        when(jwtTokenUtil.generateToken(any())).thenReturn("asdfdasfasdfaasdfasdfassdfasdfsdfdasasdfasdffff");
+        when(jwtTokenUtil.generateRefreshToken(any())).thenReturn("asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasd");
+        // Then
+        Assertions.assertDoesNotThrow(() -> memberService.signIn(createMemberSignInRequest(member)));
     }
 
     private MemberSignUpRequest createMemberSignUpRequest(Member member) {
@@ -69,6 +92,13 @@ class MemberServiceTest {
 
     private Member createSigningUpMember() {
         return createMember("wnsdhqo");
+    }
+
+    private MemberSignInRequest createMemberSignInRequest(Member member) {
+        return MemberSignInRequest.builder()
+                .memberId(member.getMemberId())
+                .password(member.getPassword())
+                .build();
     }
 
 

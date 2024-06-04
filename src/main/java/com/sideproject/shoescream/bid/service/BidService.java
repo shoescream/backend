@@ -61,18 +61,11 @@ public class BidService {
         Member member = memberRepository.findByMemberId(authentication.getName())
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         ProductOption productOption = productOptionRepository.findByProduct_ProductNumberAndSize(sellingBidRequest.productNumber(), sellingBidRequest.size());
-        Optional<Bid> buyBid = bidRepository.findTargetBidOne(productOption.getProduct().getProductNumber(), sellingBidRequest.price(), BidType.BUY_BID);
 
-        if (buyBid.isEmpty()) {
-            updateBuyNowPrice(productOption.getLowestPrice(), sellingBidRequest.price(), productOption);
-            return BidMapper.toSellingBidResponse(bidRepository.save(
-                    BidMapper.toSellingBid(
-                            sellingBidRequest, member, productOption, BidType.SELL_BID)));
-        }
-
-        buyBid.get().setBidStatus(BidStatus.COMPLETE_MATCHING);
-        dealRepository.save(DealMapper.sellingBidToDeal(sellingBidRequest, productOption, buyBid.get(), member.getMemberNumber(), DealStatus.WAITING_DEPOSIT));
-        return BidMapper.toSellingBidResponse(BidMapper.toSellingBid(sellingBidRequest, member, productOption, BidType.SELL_NOW));
+        updateBuyNowPrice(productOption.getLowestPrice(), sellingBidRequest.price(), productOption);
+        return BidMapper.toSellingBidResponse(bidRepository.save(
+                BidMapper.toSellingBid(
+                        sellingBidRequest, member, productOption, BidType.SELL_BID)));
     }
 
     @Transactional
@@ -80,18 +73,11 @@ public class BidService {
         Member member = memberRepository.findByMemberId(authentication.getName())
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         ProductOption productOption = productOptionRepository.findByProduct_ProductNumberAndSize(buyingBidRequest.productNumber(), buyingBidRequest.size());
-        Optional<Bid> sellBid = bidRepository.findTargetBidOne(productOption.getProduct().getProductNumber(), buyingBidRequest.price(), BidType.SELL_BID);
 
-        if (sellBid.isEmpty()) {
-            updateSellNowPrice(productOption.getHighestPrice(), buyingBidRequest.price(), productOption);
-            return BidMapper.toBuyingBidResponse(bidRepository.save(
-                    BidMapper.toBuyingBid(
-                            buyingBidRequest, member, productOption, BidType.BUY_BID)));
-        }
-
-        sellBid.get().setBidStatus(BidStatus.COMPLETE_MATCHING);
-        dealRepository.save(DealMapper.buyingBidToDeal(buyingBidRequest, productOption, sellBid.get(), member.getMemberNumber(), DealStatus.WAITING_DEPOSIT));
-        return BidMapper.toBuyingBidResponse(BidMapper.toBuyingBid(buyingBidRequest, member, productOption, BidType.BUY_NOW));
+        updateSellNowPrice(productOption.getHighestPrice(), buyingBidRequest.price(), productOption);
+        return BidMapper.toBuyingBidResponse(bidRepository.save(
+                BidMapper.toBuyingBid(
+                        buyingBidRequest, member, productOption, BidType.BUY_BID)));
     }
 
     private void updateSellNowPrice(int currentSellNowPrice, int buyBidPrice, ProductOption productOption) {
