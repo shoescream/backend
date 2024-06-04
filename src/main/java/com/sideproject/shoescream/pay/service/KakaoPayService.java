@@ -18,7 +18,7 @@ public class KakaoPayService {
 
     private KakaoReadyResponse kakaoReadyResponse;
     private static final String cid = "TC0ONETIME";
-    @Value("${pay.admin}")
+    @Value("${pay.key}")
     private String adminKey;
 
     public KakaoReadyResponse kakaoPayReady(KakaoPayInfoRequest kakaoPayInfoRequest, String memberId) {
