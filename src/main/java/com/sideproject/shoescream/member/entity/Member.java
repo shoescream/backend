@@ -1,6 +1,8 @@
 package com.sideproject.shoescream.member.entity;
 
 import com.sideproject.shoescream.bid.entity.Bid;
+import com.sideproject.shoescream.review.entity.Review;
+import com.sideproject.shoescream.review.entity.ReviewComment;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,6 +44,12 @@ public class Member implements UserDetails {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Bid> bids;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<ReviewComment> reviewComments;
 
     protected Member() {
 

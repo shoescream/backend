@@ -2,6 +2,7 @@ package com.sideproject.shoescream.product.entity;
 
 import com.sideproject.shoescream.bid.entity.Bid;
 import com.sideproject.shoescream.bid.entity.Deal;
+import com.sideproject.shoescream.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,6 +45,9 @@ public class Product {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Review> reviews;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductImage> productImages;
