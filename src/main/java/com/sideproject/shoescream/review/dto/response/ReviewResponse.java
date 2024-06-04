@@ -30,7 +30,7 @@ public class ReviewResponse {
                 .reviewTitle(review.getReviewTitle())
                 .reviewContent(review.getReviewContent())
                 .reviewCommentsCount(review.getReviewComments().size())
-                .reviewImages(review.getReviewImages().stream().map(ReviewImage::getReviewImageUrl).collect(Collectors.toList()))
+                .reviewImages(review.getReviewImages().stream().map(ReviewImage::getReviewImageUrl).toList())
                 .build();
     }
 }
