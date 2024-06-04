@@ -35,3 +35,5 @@ jwt:
   token.expired-time-ms: 3600000
   refreshToken.expired-time-ms: 86400000
 
+pay:
+  key: ${KAKAO_PAY_ADMIN_KEY}
