@@ -16,6 +16,7 @@ import com.sideproject.shoescream.notification.constant.NotificationType;
 import com.sideproject.shoescream.notification.dto.request.NotificationRequest;
 import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.entity.ProductOption;
+import com.sideproject.shoescream.product.exception.ProductNotFoundException;
 import com.sideproject.shoescream.product.repository.ProductImageRepository;
 import com.sideproject.shoescream.product.repository.ProductOptionRepository;
 import com.sideproject.shoescream.product.repository.ProductRepository;
@@ -32,8 +33,6 @@ public class BidService {
     private final BidRepository bidRepository;
     private final ProductRepository productRepository;
     private final ProductOptionRepository productOptionRepository;
-    private final ProductImageRepository productImageRepository;
-    private final DealRepository dealRepository;
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -49,7 +48,7 @@ public class BidService {
 
     public BidHistoryResponse getBidHistory(String productNumber, String size) {
         Product product = productRepository.findById(Long.valueOf(productNumber))
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new ProductNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
 
         return BidMapper.toBidHistoryResponse(product, size);
     }
