@@ -21,6 +21,7 @@ public class BidMapper {
                 .productCode(productOption.getProduct().getProductCode())
                 .productName(productOption.getProduct().getProductName())
                 .productSubName(productOption.getProduct().getProductSubName())
+                .productImage(productOption.getProduct().getProductImages().get(0).getProductImage())
                 .lowestPrice(productOption.getLowestPrice())
                 .highestPrice(productOption.getHighestPrice())
                 .build();
@@ -54,6 +55,7 @@ public class BidMapper {
                 .productCode(productOption.getProduct().getProductCode())
                 .productName(productOption.getProduct().getProductName())
                 .productSubName(productOption.getProduct().getProductSubName())
+                .productImage(productOption.getProduct().getProductImages().get(0).getProductImage())
                 .lowestPrice(productOption.getLowestPrice())
                 .highestPrice(productOption.getHighestPrice())
                 .build();

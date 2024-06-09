@@ -14,8 +14,9 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     @Query("select b from Bid b where b.member.memberNumber = :memberNumber")
     List<Bid> findByMemberNumber(@Param("memberNumber") Long memberNumber);
 
-    @Query("select b from Bid b where b.product.productNumber =:productNumber and b.bidPrice =:bidPrice and b.bidType =:bidType order by b.createdAt")
-    Optional<Bid> findTargetBidOne(@Param("productNumber") Long productNumber,
+    @Query("select b from Bid b where b.product.productNumber =:productNumber and b.bidPrice =:bidPrice and b.size =:size and b.bidType =:bidType order by b.createdAt")
+    List<Bid> findTargetBidOne(@Param("productNumber") Long productNumber,
                                 @Param("bidPrice") int bidPrice,
+                                @Param("size") String size,
                                 @Param("bidType") BidType bidType);
 }
