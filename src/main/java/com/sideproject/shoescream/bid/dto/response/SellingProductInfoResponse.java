@@ -10,6 +10,8 @@ public record SellingProductInfoResponse(
 
         String productSubName,
 
+        String productImage,
+
         int lowestPrice,
 
         int highestPrice
