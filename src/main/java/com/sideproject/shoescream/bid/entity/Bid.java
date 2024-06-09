@@ -3,12 +3,14 @@ package com.sideproject.shoescream.bid.entity;
 import com.sideproject.shoescream.bid.constant.BidStatus;
 import com.sideproject.shoescream.bid.constant.BidType;
 import com.sideproject.shoescream.member.entity.Member;
+import com.sideproject.shoescream.notification.dto.request.NotificationRequest;
 import com.sideproject.shoescream.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 
@@ -52,5 +54,10 @@ public class Bid {
 
     protected Bid() {
 
+    }
+
+    public void publishEvent(ApplicationEventPublisher eventPublisher, NotificationRequest notificationRequest) {
+        System.out.println("하이");
+        eventPublisher.publishEvent(notificationRequest);
     }
 }

@@ -22,7 +22,7 @@ public class BidController {
 
     @PostMapping("/buy")
     public Response<BuyingBidResponse> buyingBid(@RequestBody BuyingBidRequest buyingBidRequest, Authentication authentication) {
-        return Response.success(bidService.buyingBid(buyingBidRequest, authentication));
+        return Response.success(bidService.buyingBid(buyingBidRequest, authentication.getName()));
     }
 
     @GetMapping("/sell/{productNumber}")
@@ -32,12 +32,17 @@ public class BidController {
 
     @PostMapping("/sell")
     public Response<SellingBidResponse> sellingBid(@RequestBody SellingBidRequest sellingBidRequest, Authentication authentication) {
-        return Response.success(bidService.sellingBid(sellingBidRequest, authentication));
+        return Response.success(bidService.sellingBid(sellingBidRequest, authentication.getName()));
     }
-
 
     @GetMapping("/bid-history")
     public Response<BidHistoryResponse> getBidHistory(@RequestParam String productNumber, @RequestParam String size) {
         return Response.success(bidService.getBidHistory(productNumber, size));
+    }
+
+
+    @PostMapping("/sell-now")
+    public Response<SellingBidResponse> sellingNow(@RequestBody SellingBidRequest sellingBidRequest, Authentication authentication) {
+        return Response.success(bidService.sellingNow(sellingBidRequest, authentication.getName()));
     }
 }
