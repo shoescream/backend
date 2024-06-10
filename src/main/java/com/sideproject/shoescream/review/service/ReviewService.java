@@ -46,6 +46,13 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
+    public List<ReviewResponse> getRecentReviewsByProductNumber(Long productNumber) {
+        List<Review> recentReviews = reviewRepository.findTop8ByProductProductNumberOrderByCreatedAtDesc(productNumber);
+        return recentReviews.stream()
+                .map(ReviewResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     public ReviewResponse getReviewById(Long reviewNumber) {
         Review review = reviewRepository.findById(reviewNumber)
                 .orElseThrow(() -> new RuntimeException("Review not found"));

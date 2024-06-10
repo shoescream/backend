@@ -19,6 +19,7 @@ public class ReviewResponse {
     private LocalDateTime createdAt;
     private String reviewTitle;
     private String reviewContent;
+    //TODO: List<ReviewCommentResponse>
     private List<String> reviewComments;
     private int reviewCommentsCount;
     private List<String> reviewImages;

@@ -25,6 +25,11 @@ public class ReviewController {
         return Response.success(reviewService.getAllReviewsByProductNumber(productNumber));
     }
 
+    @GetMapping("/recent-review/{productNumber}")
+    public Response<List<ReviewResponse>> getRecentReviewsByProductNumber(@PathVariable Long productNumber) {
+        return Response.success(reviewService.getRecentReviewsByProductNumber(productNumber));
+    }
+
     // reviewNumber로 통일
     @GetMapping("/review/{reviewNumber}")
     public Response<ReviewResponse> getReviewById(@PathVariable Long reviewNumber) {
