@@ -6,6 +6,7 @@ import lombok.Builder;
 public record ReviewPostRequest(
         String reviewTitle,
         String reviewContent,
-        int rating
+        int rating,
+        long dealNumber
 ) {
 }
