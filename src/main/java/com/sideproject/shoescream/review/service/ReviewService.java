@@ -1,5 +1,7 @@
 package com.sideproject.shoescream.review.service;
 
+import com.sideproject.shoescream.bid.entity.Deal;
+import com.sideproject.shoescream.bid.repository.DealRepository;
 import com.sideproject.shoescream.global.exception.ErrorCode;
 import com.sideproject.shoescream.global.service.S3Service;
 import com.sideproject.shoescream.member.entity.Member;
@@ -38,6 +40,7 @@ public class ReviewService {
     private final ProductRepository productRepository;
     private final ReviewImageRepository reviewImageRepository;
     private final ReviewCommentRepository reviewCommentRepository;
+    private final DealRepository dealRepository;
 
     public List<ReviewResponse> getAllReviewsByProductNumber(Long productNumber) {
         List<Review> reviews = reviewRepository.findByProductNumber(productNumber);
@@ -73,6 +76,9 @@ public class ReviewService {
         Product product = productRepository.findById(productNumber)
                 .orElseThrow(() -> new RuntimeException("no product"));
         List<String> reviewImagesUrl = s3Service.upload(reviewImages);
+        Deal deal = dealRepository.findById(reviewPostRequest.dealNumber())
+                .orElseThrow(() -> new RuntimeException());
+        // TODO : deal.setIsWriteReview(true);
         Review review = reviewRepository.save(
                 ReviewMapper.toReview(reviewPostRequest, member, product));
         List<String> imagesUrlList = new ArrayList<>();
