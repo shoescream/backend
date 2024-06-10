@@ -1,5 +1,6 @@
 package com.sideproject.shoescream.global.dto.response;
 
+import com.sideproject.shoescream.review.dto.response.ReviewCommentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -25,6 +26,7 @@ public class Response<T> {
     public static Response<Void> error(String resultCode) {
         return new Response<Void>(resultCode, null);
     }
+
 
     public String toStream() {
         if (result == null) {
