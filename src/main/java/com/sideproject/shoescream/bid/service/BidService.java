@@ -16,6 +16,7 @@ import com.sideproject.shoescream.notification.constant.NotificationType;
 import com.sideproject.shoescream.notification.dto.request.NotificationRequest;
 import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.entity.ProductOption;
+import com.sideproject.shoescream.product.exception.ProductNotFoundException;
 import com.sideproject.shoescream.product.repository.ProductImageRepository;
 import com.sideproject.shoescream.product.repository.ProductOptionRepository;
 import com.sideproject.shoescream.product.repository.ProductRepository;
@@ -32,26 +33,30 @@ public class BidService {
     private final BidRepository bidRepository;
     private final ProductRepository productRepository;
     private final ProductOptionRepository productOptionRepository;
-    private final ProductImageRepository productImageRepository;
-    private final DealRepository dealRepository;
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public SellingProductInfoResponse getSellingProductInfo(Long productNumber, String size) {
-        ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(productNumber, size);
-        return BidMapper.toSellingProductInfoResponse(product);
-    }
-
-    public BuyingProductInfoResponse getBuyingProductInfo(Long productNumber, String size, Authentication authentication) {
+    public BuyingProductInfoResponse getBuyingProductInfo(Long productNumber, String size) {
         ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(productNumber, size);
         return BidMapper.toBuyingProductInfoResponse(product);
     }
 
-    public BidHistoryResponse getBidHistory(String productNumber, String size) {
-        Product product = productRepository.findById(Long.valueOf(productNumber))
-                .orElseThrow(() -> new RuntimeException());
+    @Transactional
+    public BuyingBidResponse buyingBid(BuyingBidRequest buyingBidRequest, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        ProductOption productOption = productOptionRepository.findByProduct_ProductNumberAndSize(buyingBidRequest.productNumber(), buyingBidRequest.size());
 
-        return BidMapper.toBidHistoryResponse(product, size);
+        updateSellNowPrice(productOption.getHighestPrice(), buyingBidRequest.price(), productOption);
+        return BidMapper.toBuyingBidResponse(bidRepository.save(
+                BidMapper.toBuyingBid(
+                        buyingBidRequest, member, productOption, BidType.BUY_BID)));
+    }
+
+
+    public SellingProductInfoResponse getSellingProductInfo(Long productNumber, String size) {
+        ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(productNumber, size);
+        return BidMapper.toSellingProductInfoResponse(product);
     }
 
     @Transactional
@@ -70,26 +75,17 @@ public class BidService {
     public SellingBidResponse sellingNow(SellingBidRequest sellingBidRequest, String memberId) {
         Member seller = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
-        Bid buyBidInfo = bidRepository.findTargetBidOne(
-                sellingBidRequest.productNumber(),
-                sellingBidRequest.price(),
-                sellingBidRequest.size(),
-                BidType.BUY_BID).get(0);
+        Bid buyBidInfo = findTargetBuyBidOne(sellingBidRequest);
 
         notifySellInfo(buyBidInfo, createNotificationRequest(buyBidInfo));
         return BidMapper.toSellingBidResponse(buyBidInfo);
     }
 
-    @Transactional
-    public BuyingBidResponse buyingBid(BuyingBidRequest buyingBidRequest, String memberId) {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
-        ProductOption productOption = productOptionRepository.findByProduct_ProductNumberAndSize(buyingBidRequest.productNumber(), buyingBidRequest.size());
+    public BidHistoryResponse getBidHistory(String productNumber, String size) {
+        Product product = productRepository.findById(Long.valueOf(productNumber))
+                .orElseThrow(() -> new ProductNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        updateSellNowPrice(productOption.getHighestPrice(), buyingBidRequest.price(), productOption);
-        return BidMapper.toBuyingBidResponse(bidRepository.save(
-                BidMapper.toBuyingBid(
-                        buyingBidRequest, member, productOption, BidType.BUY_BID)));
+        return BidMapper.toBidHistoryResponse(product, size);
     }
 
     private void updateSellNowPrice(int currentSellNowPrice, int buyBidPrice, ProductOption productOption) {
@@ -115,5 +111,13 @@ public class BidService {
                 .content("결제 알림")
                 .relatedUrl("test/url")
                 .build();
+    }
+
+    private Bid findTargetBuyBidOne(SellingBidRequest sellingBidRequest) {
+        return bidRepository.findTargetBidOne(
+                sellingBidRequest.productNumber(),
+                sellingBidRequest.price(),
+                sellingBidRequest.size(),
+                BidType.BUY_BID).get(0);
     }
 }

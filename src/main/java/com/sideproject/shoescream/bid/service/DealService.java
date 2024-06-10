@@ -5,7 +5,9 @@ import com.sideproject.shoescream.bid.dto.response.QuoteResponse;
 import com.sideproject.shoescream.bid.entity.Deal;
 import com.sideproject.shoescream.bid.repository.DealRepository;
 import com.sideproject.shoescream.bid.util.DealMapper;
+import com.sideproject.shoescream.global.exception.ErrorCode;
 import com.sideproject.shoescream.product.entity.Product;
+import com.sideproject.shoescream.product.exception.ProductNotFoundException;
 import com.sideproject.shoescream.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,7 @@ public class DealService {
 
     public DealHistoryResponse getDealHistoryResponse(String productNumber, String size) {
         Product product = productRepository.findById(Long.valueOf(productNumber))
-                .orElseThrow(() -> new RuntimeException());
-
+                .orElseThrow(() -> new ProductNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
         return DealMapper.toDealHistoryResponse(product, size);
     }
 }
