@@ -34,4 +34,15 @@ public class ReviewComment {
 
     // No-args constructor for JPA
     protected ReviewComment() {}
+
+    // 정적 팩토리 메서드를 추가
+    public static ReviewComment create(Member member, Review review, String commentContent) {
+        ReviewComment reviewComment = new ReviewComment();
+        reviewComment.member = member;
+        reviewComment.review = review;
+        reviewComment.commentContent = commentContent;
+        reviewComment.createdAt = LocalDateTime.now();
+        return reviewComment;
+    }
+
 }

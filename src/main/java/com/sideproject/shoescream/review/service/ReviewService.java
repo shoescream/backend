@@ -7,10 +7,14 @@ import com.sideproject.shoescream.member.exception.MemberNotFoundException;
 import com.sideproject.shoescream.member.repository.MemberRepository;
 import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.repository.ProductRepository;
+import com.sideproject.shoescream.review.dto.request.ReviewCommentPostRequest;
 import com.sideproject.shoescream.review.dto.request.ReviewPostRequest;
+import com.sideproject.shoescream.review.dto.response.ReviewCommentResponse;
 import com.sideproject.shoescream.review.dto.response.ReviewResponse;
 import com.sideproject.shoescream.review.entity.Review;
+import com.sideproject.shoescream.review.entity.ReviewComment;
 import com.sideproject.shoescream.review.entity.ReviewImage;
+import com.sideproject.shoescream.review.repository.ReviewCommentRepository;
 import com.sideproject.shoescream.review.repository.ReviewImageRepository;
 import com.sideproject.shoescream.review.repository.ReviewRepository;
 import com.sideproject.shoescream.review.util.ReviewMapper;
@@ -22,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +37,7 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
     private final ReviewImageRepository reviewImageRepository;
+    private final ReviewCommentRepository reviewCommentRepository;
 
     public List<ReviewResponse> getAllReviewsByProductNumber(Long productNumber) {
         List<Review> reviews = reviewRepository.findByProductNumber(productNumber);
@@ -46,6 +50,13 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewNumber)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
         return ReviewResponse.fromEntity(review);
+    }
+
+    public List<ReviewCommentResponse> getAllReviewCommentsByReviewNumber(Long reviewNumber) {
+        List<ReviewComment> reviewComments = reviewCommentRepository.findByCommentsForReviewNumber(reviewNumber);
+        return reviewComments.stream()
+                .map(ReviewCommentResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -92,7 +103,7 @@ public class ReviewService {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         Review review = reviewRepository.findById(reviewNumber)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new RuntimeException("리뷰가 없습니다."));
 
         if (!Objects.equals(member.getMemberNumber(), review.getMember().getMemberNumber())) {
             throw new RuntimeException();
@@ -100,6 +111,47 @@ public class ReviewService {
 
         reviewRepository.deleteById(reviewNumber);
 
+        return "삭제 완료";
+    }
+
+    @Transactional
+    public ReviewCommentResponse postReviewComment(ReviewCommentPostRequest reviewCommentPostRequest, Long reviewNumber, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        Review review = reviewRepository.findById(reviewNumber)
+                .orElseThrow(() -> new RuntimeException());
+        ReviewComment reviewComment = reviewCommentRepository.save(
+                ReviewMapper.toReviewComment(reviewCommentPostRequest, member, review));
+        return ReviewMapper.toReviewCommentResponse(reviewComment);
+    }
+
+    @Transactional
+    public ReviewCommentResponse updateReviewComment(ReviewCommentPostRequest reviewCommentPostRequest, Long commentNumber, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        Review review = reviewRepository.findById(reviewCommentPostRequest.reviewNumber())
+                .orElseThrow(() -> new RuntimeException());
+        //TODO: 업데이트 시간 변경 요망
+
+        ReviewComment reviewComment = reviewCommentRepository.findById(commentNumber)
+                .orElseThrow(() -> new RuntimeException());
+        reviewComment.setCommentContent(reviewCommentPostRequest.commentContent());
+
+        return ReviewMapper.toUpdateReviewCommentResponse(reviewComment);
+    }
+
+    @Transactional
+    public String deleteReviewComment(Long commentNumber, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        ReviewComment reviewComment = reviewCommentRepository.findById(commentNumber)
+                .orElseThrow(() -> new RuntimeException("리뷰 댓글 없습니다."));
+
+        if (!Objects.equals(member.getMemberNumber(), reviewComment.getMember().getMemberNumber())) {
+            throw new RuntimeException();
+        }
+
+        reviewCommentRepository.deleteById(commentNumber);
         return "삭제 완료";
     }
 }

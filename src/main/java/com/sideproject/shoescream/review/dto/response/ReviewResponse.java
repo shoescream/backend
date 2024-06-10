@@ -1,6 +1,7 @@
 package com.sideproject.shoescream.review.dto.response;
 
 import com.sideproject.shoescream.review.entity.Review;
+import com.sideproject.shoescream.review.entity.ReviewComment;
 import lombok.Builder;
 import lombok.Getter;
 import com.sideproject.shoescream.review.entity.ReviewImage;
@@ -18,6 +19,7 @@ public class ReviewResponse {
     private LocalDateTime createdAt;
     private String reviewTitle;
     private String reviewContent;
+    private List<String> reviewComments;
     private int reviewCommentsCount;
     private List<String> reviewImages;
 
@@ -29,6 +31,7 @@ public class ReviewResponse {
                 .createdAt(review.getCreatedAt())
                 .reviewTitle(review.getReviewTitle())
                 .reviewContent(review.getReviewContent())
+                .reviewComments(review.getReviewComments().stream().map(ReviewComment::getCommentContent).toList())
                 .reviewCommentsCount(review.getReviewComments().size())
                 .reviewImages(review.getReviewImages().stream().map(ReviewImage::getReviewImageUrl).toList())
                 .build();

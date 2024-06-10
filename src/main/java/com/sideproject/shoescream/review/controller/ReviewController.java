@@ -1,9 +1,12 @@
 package com.sideproject.shoescream.review.controller;
 
 import com.sideproject.shoescream.global.dto.response.Response;
+import com.sideproject.shoescream.review.dto.request.ReviewCommentPostRequest;
 import com.sideproject.shoescream.review.dto.request.ReviewPostRequest;
+import com.sideproject.shoescream.review.dto.response.ReviewCommentResponse;
 import com.sideproject.shoescream.review.dto.response.ReviewResponse;
 import com.sideproject.shoescream.review.service.ReviewService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +41,7 @@ public class ReviewController {
 
     // 게시글 수정
     @PostMapping("/review/update/{reviewNumber}")
-    public Response<ReviewResponse> updateReview(@RequestPart(value = "reviewPostRequest") ReviewPostRequest reviewPostRequest,
+    public Response<ReviewResponse> updateReview(@RequestBody ReviewPostRequest reviewPostRequest,
                                                  @PathVariable(value = "reviewNumber") Long reviewNumber,
                                                  Authentication authentication) {
         return Response.success(reviewService.updateReview(reviewPostRequest, reviewNumber, authentication.getName()));
@@ -50,4 +53,32 @@ public class ReviewController {
                                Authentication authentication) {
         return Response.success(reviewService.deleteReview(reviewNumber, authentication.getName()));
     }
+
+    // 댓글 작성
+    @PostMapping("/review/{reviewNumber}/comments")
+    public Response<ReviewCommentResponse> postReviewComment(@PathVariable Long reviewNumber,
+                                                             @RequestBody ReviewCommentPostRequest reviewCommentPostRequest,
+                                                             Authentication authentication) {
+        return Response.success(reviewService.postReviewComment(reviewCommentPostRequest, reviewNumber, authentication.getName()));
+    }
+
+    // 댓글 수정
+    @PostMapping("/review/{commentNumber}/update/comment")
+    public Response<ReviewCommentResponse> updateReviewComment(@RequestBody ReviewCommentPostRequest reviewCommentPostRequest,
+                                                               @PathVariable(value = "commentNumber") Long commentNumber,
+                                                               Authentication authentication) {
+        // 예외 처리 수정 예정
+//        if (authentication == null || authentication.getName() == null) {
+//            return Response.failure("Authentication is required.");
+//        }
+        return Response.success(reviewService.updateReviewComment(reviewCommentPostRequest, commentNumber, authentication.getName()));
+    }
+
+    // 댓글 삭제
+    @PostMapping("/review/{commentNumber}/delete/comment")
+    public Response<String> deleteReviewComment(@PathVariable Long commentNumber,
+                                                Authentication authentication) {
+        return Response.success(reviewService.deleteReviewComment(commentNumber, authentication.getName()));
+    }
+
 }
