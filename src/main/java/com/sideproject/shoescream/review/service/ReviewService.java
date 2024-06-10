@@ -78,7 +78,11 @@ public class ReviewService {
         List<String> reviewImagesUrl = s3Service.upload(reviewImages);
         Deal deal = dealRepository.findById(reviewPostRequest.dealNumber())
                 .orElseThrow(() -> new RuntimeException());
-        // TODO : deal.setIsWriteReview(true);
+
+        if (deal.isWriteReview()) {
+            throw new RuntimeException();
+        }
+        deal.setWriteReview(true);
         Review review = reviewRepository.save(
                 ReviewMapper.toReview(reviewPostRequest, member, product));
         List<String> imagesUrlList = new ArrayList<>();
