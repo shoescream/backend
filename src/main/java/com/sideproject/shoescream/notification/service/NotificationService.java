@@ -25,33 +25,33 @@ public class NotificationService {
     private static final Long SSE_TIME_OUT = 1800000L;
 
     public SseEmitter subscribe(String memberId, String lastEventId) {
-        Member receiver = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new RuntimeException());
-        String emitterId = makeTimeIncludeId(receiver.getMemberNumber());
+        String emitterId = makeTimeIncludeId(memberId);
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(SSE_TIME_OUT));
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
 
-        String eventId = makeTimeIncludeId(receiver.getMemberNumber());
-        sendNotification(emitter, eventId, emitterId, "EventStream Created. [userId=" + receiver.getMemberNumber() + "]");
+        String eventId = makeTimeIncludeId(memberId);
+        sendNotification(emitter, eventId, emitterId, "EventStream Created. [userId=" + memberId + "]");
 
         // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
         if (hasLostData(lastEventId)) {
-            sendLostData(lastEventId, receiver.getMemberNumber(), emitterId, emitter);
+            sendLostData(lastEventId, memberId, emitterId, emitter);
         }
 
         return emitter;
     }
 
-    private String makeTimeIncludeId(Long memberNumber) {
-        return memberNumber + "_" + System.currentTimeMillis();
+    private String makeTimeIncludeId(String memberId) {
+        return memberId + "_" + System.currentTimeMillis();
     }
 
     private void sendNotification(SseEmitter emitter, String eventId, String emitterId, Object data) {
         try {
             emitter.send(SseEmitter.event()
                     .id(eventId)
-                    .data(data));
+                    .data(data)
+                    .name("notification"));
+            System.out.println(data.toString());
         } catch (IOException e) {
             emitterRepository.deleteById(emitterId);
         }
@@ -61,8 +61,8 @@ public class NotificationService {
         return !lastEventId.isEmpty();
     }
 
-    private void sendLostData(String lastEventId, Long memberNumber, String emitterId, SseEmitter emitter) {
-        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberNumber(String.valueOf(memberNumber));
+    private void sendLostData(String lastEventId, String memberId, String emitterId, SseEmitter emitter) {
+        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberNumber(memberId);
         eventCaches.entrySet().stream()
                 .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
                 .forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
