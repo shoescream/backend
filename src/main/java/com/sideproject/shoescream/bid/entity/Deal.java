@@ -50,7 +50,7 @@ public class Deal {
     private LocalDateTime tradedAt;
 
     @Column(name = "is_write_review")
-    private boolean isWriteReview;
+    private Boolean isWriteReview;
 
     protected Deal() {
 

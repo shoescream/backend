@@ -20,6 +20,6 @@ public record MyBuyingHistoryResponse(
         LocalDateTime tradedAt,
         String type,
         String status,
-        boolean isWriteReview
+        Boolean isWriteReview
 ) {
 }
