@@ -24,6 +24,7 @@ public class MemberMapper {
 
     public static MemberResponse toMemberResponse(Member member) {
         return MemberResponse.builder()
+                .memberNumber(member.getMemberNumber())
                 .memberId(member.getMemberId())
                 .email(member.getEmail())
                 .name(member.getName())
@@ -77,7 +78,7 @@ public class MemberMapper {
                 .size(myDeal.getSize())
                 .tradedAt(myDeal.getTradedAt())
                 .status(myDeal.getDealStatus().getDealStatus())
-                .isWriteReview(myDeal.isWriteReview())
+                .isWriteReview(myDeal.getIsWriteReview())
                 .build();
     }
 
