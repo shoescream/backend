@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -47,6 +48,9 @@ public class Deal {
 
     @Column(name = "traded_at")
     private LocalDateTime tradedAt;
+
+    @Column(name = "is_write_review")
+    private boolean isWriteReview;
 
     protected Deal() {
 

@@ -19,6 +19,7 @@ public record MyBuyingHistoryResponse(
         LocalDateTime deadLine,
         LocalDateTime tradedAt,
         String type,
-        String status
+        String status,
+        boolean isWriteReview
 ) {
 }
