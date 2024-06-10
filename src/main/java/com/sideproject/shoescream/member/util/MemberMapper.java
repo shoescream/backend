@@ -77,6 +77,7 @@ public class MemberMapper {
                 .size(myDeal.getSize())
                 .tradedAt(myDeal.getTradedAt())
                 .status(myDeal.getDealStatus().getDealStatus())
+                .isWriteReview(myDeal.isWriteReview())
                 .build();
     }
 
