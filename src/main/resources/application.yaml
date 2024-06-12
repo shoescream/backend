@@ -1,3 +1,12 @@
+debug: false
+management.endpoint.web.exposure.include: "*"
+
+logging:
+  level:
+    com.fastcampus.projectboardstart: debug
+    org.springframework.web.servlet: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
 spring:
   datasource:
     url: ${DB_URL}
