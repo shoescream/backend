@@ -1,15 +1,12 @@
 package com.sideproject.shoescream.bid.util;
 
 import com.sideproject.shoescream.bid.constant.DealStatus;
-import com.sideproject.shoescream.bid.dto.request.BuyingBidRequest;
-import com.sideproject.shoescream.bid.dto.request.SellingBidRequest;
 import com.sideproject.shoescream.bid.dto.response.DealHistoryResponse;
 import com.sideproject.shoescream.bid.dto.response.DealResponse;
 import com.sideproject.shoescream.bid.dto.response.QuoteResponse;
 import com.sideproject.shoescream.bid.entity.Bid;
 import com.sideproject.shoescream.bid.entity.Deal;
 import com.sideproject.shoescream.product.entity.Product;
-import com.sideproject.shoescream.product.entity.ProductOption;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,26 +26,14 @@ public class DealMapper {
                 .build();
     }
 
-    public static Deal buyingBidToDeal(BuyingBidRequest buyingBidRequest, ProductOption productOption, Bid bid, long buyerNumber, DealStatus dealStatus) {
+    public static Deal selllNowToDeal(Bid buyBidInfo, long sellerNumber) {
         return Deal.builder()
-                .buyerNumber(buyerNumber)
-                .sellerNumber(bid.getMember().getMemberNumber())
-                .product(productOption.getProduct())
-                .size(buyingBidRequest.size())
-                .price(buyingBidRequest.price())
-                .dealStatus(dealStatus)
-                .createdAt(LocalDateTime.now())
-                .build();
-    }
-
-    public static Deal sellingBidToDeal(SellingBidRequest sellingBidRequest, ProductOption productOption, Bid bid, long sellerNumber, DealStatus dealStatus) {
-        return Deal.builder()
-                .buyerNumber(bid.getMember().getMemberNumber())
+                .buyerNumber(buyBidInfo.getMember().getMemberNumber())
                 .sellerNumber(sellerNumber)
-                .product(productOption.getProduct())
-                .size(sellingBidRequest.size())
-                .price(sellingBidRequest.price())
-                .dealStatus(dealStatus)
+                .product(buyBidInfo.getProduct())
+                .size(buyBidInfo.getSize())
+                .price(buyBidInfo.getBidPrice())
+                .dealStatus(DealStatus.WAITING_DEPOSIT)
                 .createdAt(LocalDateTime.now())
                 .build();
     }
