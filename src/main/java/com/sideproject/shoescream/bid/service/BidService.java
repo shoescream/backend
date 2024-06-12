@@ -8,6 +8,7 @@ import com.sideproject.shoescream.bid.entity.Bid;
 import com.sideproject.shoescream.bid.repository.BidRepository;
 import com.sideproject.shoescream.bid.repository.DealRepository;
 import com.sideproject.shoescream.bid.util.BidMapper;
+import com.sideproject.shoescream.bid.util.DealMapper;
 import com.sideproject.shoescream.global.exception.ErrorCode;
 import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.exception.MemberNotFoundException;
@@ -35,6 +36,7 @@ public class BidService {
     private final ProductOptionRepository productOptionRepository;
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final DealRepository dealRepository;
 
     public BuyingProductInfoResponse getBuyingProductInfo(Long productNumber, String size) {
         ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(productNumber, size);
@@ -76,7 +78,8 @@ public class BidService {
         Member seller = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         Bid buyBidInfo = findTargetBuyBidOne(sellingBidRequest);
-
+        dealRepository.save(
+                DealMapper.selllNowToDeal(buyBidInfo, seller.getMemberNumber()));
         notifySellInfo(buyBidInfo, createNotificationRequest(buyBidInfo));
         return BidMapper.toSellingBidResponse(buyBidInfo);
     }
