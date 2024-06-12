@@ -38,8 +38,8 @@ public class BidService {
     private final ApplicationEventPublisher eventPublisher;
     private final DealRepository dealRepository;
 
-    public BuyingProductInfoResponse getBuyingProductInfo(Long productNumber, String size) {
-        ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(productNumber, size);
+    public BuyingProductInfoResponse getBuyingProductInfo(String productNumber, String size) {
+        ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(Long.valueOf(productNumber), size);
         return BidMapper.toBuyingProductInfoResponse(product);
     }
 
@@ -56,8 +56,8 @@ public class BidService {
     }
 
 
-    public SellingProductInfoResponse getSellingProductInfo(Long productNumber, String size) {
-        ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(productNumber, size);
+    public SellingProductInfoResponse getSellingProductInfo(String productNumber, String size) {
+        ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(Long.valueOf(productNumber), size);
         return BidMapper.toSellingProductInfoResponse(product);
     }
 

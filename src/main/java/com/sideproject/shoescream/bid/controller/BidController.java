@@ -16,7 +16,7 @@ public class BidController {
     private final BidService bidService;
 
     @GetMapping("/buy/{productNumber}")
-    public Response<BuyingProductInfoResponse> getBuyingProductInfo(@PathVariable Long productNumber, @RequestParam String size) {
+    public Response<BuyingProductInfoResponse> getBuyingProductInfo(@PathVariable String productNumber, @RequestParam String size) {
         return Response.success(bidService.getBuyingProductInfo(productNumber, size));
     }
 
@@ -26,7 +26,7 @@ public class BidController {
     }
 
     @GetMapping("/sell/{productNumber}")
-    public Response<SellingProductInfoResponse> getSellingProductInfo(@PathVariable Long productNumber, @RequestParam String size) {
+    public Response<SellingProductInfoResponse> getSellingProductInfo(@PathVariable String productNumber, @RequestParam String size) {
         return Response.success(bidService.getSellingProductInfo(productNumber, size));
     }
 
