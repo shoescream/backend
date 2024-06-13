@@ -40,7 +40,6 @@ class NotificationServiceTest {
     void subscribe() throws Exception {
         // Given
         Member member = createMember("wnsdhqo");
-        given(memberRepository.findByMemberId(member.getMemberId())).willReturn(Optional.of(member));
 
         SseEmitter sseEmitter = new SseEmitter();
         given(emitterRepository.save(anyString(), any(SseEmitter.class))).willReturn(sseEmitter);
@@ -60,7 +59,6 @@ class NotificationServiceTest {
         Member member = createMember("wnsdhqo");
         SseEmitter sseEmitter = new SseEmitter();
         String lastEventId = "";
-        given(memberRepository.findByMemberId(member.getMemberId())).willReturn(Optional.of(member));
         given(emitterRepository.save(anyString(), any(SseEmitter.class))).willReturn(sseEmitter);
         given(notificationRepository.save(any(Notification.class))).willReturn(createNotification(member, "결제 알림", "test/url", NotificationType.PAYMENT));
 
