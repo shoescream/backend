@@ -58,7 +58,7 @@ class EmitterRepositoryImplTest {
         emitterRepository.save(emitterId3, new SseEmitter(DEFAULT_TIMEOUT));
 
         // When
-        Map<String, SseEmitter> result = emitterRepository.findAllEmitterStartWithByMemberNumber(String.valueOf(memberNumber));
+        Map<String, SseEmitter> result = emitterRepository.findAllEmitterStartWithByMemberId(String.valueOf(memberNumber));
 
         // Then
         Assertions.assertEquals(3, result.size());
@@ -68,31 +68,31 @@ class EmitterRepositoryImplTest {
     @DisplayName("어떤 회원에게 수신된 이벤트를 캐시에서 모두 찾는다.")
     void findAllEventCacheStartWithByMemberNumber() throws Exception {
         // Given
-        Long memberNumber = 1L;
-        String eventCacheId1 = memberNumber + "_" + System.currentTimeMillis();
+        String memberId = "wnsdhqo";
+        String eventCacheId1 = memberId + "_" + System.currentTimeMillis();
         Notification notification1 = createNotification("거래가 성사 되었습니다1", "test/url1");
 
         emitterRepository.saveEventCache(eventCacheId1, notification1);
 
         Thread.sleep(100);
-        String eventCacheId2 = memberNumber + "_" + System.currentTimeMillis();
+        String eventCacheId2 = memberId + "_" + System.currentTimeMillis();
         Notification notification2 = createNotification("거래가 성사 되었습니다2", "test/url2");
 
         emitterRepository.saveEventCache(eventCacheId2, notification2);
 
         // When
-        Map<String, Object> resut = emitterRepository.findAllEventCacheStartWithByMemberNumber(String.valueOf(memberNumber));
+        Map<String, Object> result = emitterRepository.findAllEventCacheStartWithByMemberId(memberId);
 
         // Then
-        Assertions.assertEquals(2, resut.size());
+        Assertions.assertEquals(2, result.size());
     }
 
     @Test
     @DisplayName("Id를 통해 Emitter를 Repository에서 제거한다.")
     void deleteById() throws Exception {
         // Given
-        Long memberNumber = 1L;
-        String emitterId = memberNumber + "_" + System.currentTimeMillis();
+        String memberId = "wnsdhqo";
+        String emitterId = memberId + "_" + System.currentTimeMillis();
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
 
         // When
@@ -100,49 +100,49 @@ class EmitterRepositoryImplTest {
         emitterRepository.deleteById(emitterId);
 
         // Then
-        Assertions.assertEquals(0, emitterRepository.findAllEmitterStartWithByMemberNumber(emitterId).size());
+        Assertions.assertEquals(0, emitterRepository.findAllEmitterStartWithByMemberId(emitterId).size());
     }
 
     @Test
     @DisplayName("저장된 모든 Emitter를 제거한다.")
     void deleteAllEmitterStartWithId() throws Exception {
         // Given
-        Long memberNumber = 1L;
-        String emitterId1 = memberNumber + "_" + System.currentTimeMillis();
+        String memberId = "wnsdhqo";
+        String emitterId1 = memberId + "_" + System.currentTimeMillis();
         emitterRepository.save(emitterId1, new SseEmitter(DEFAULT_TIMEOUT));
 
         Thread.sleep(100);
-        String emitterId2 = memberNumber + "_" + System.currentTimeMillis();
+        String emitterId2 = memberId + "_" + System.currentTimeMillis();
         emitterRepository.save(emitterId2, new SseEmitter(DEFAULT_TIMEOUT));
 
         // When
-        emitterRepository.deleteAllEmitterStartWithMemberId(String.valueOf(memberNumber));
+        emitterRepository.deleteAllEmitterStartWithMemberId(memberId);
 
         // Then
-        Assertions.assertEquals(0, emitterRepository.findAllEmitterStartWithByMemberNumber(String.valueOf(memberNumber)).size());
+        Assertions.assertEquals(0, emitterRepository.findAllEventCacheStartWithByMemberId(memberId).size());
     }
 
     @Test
     @DisplayName("캐시에 저장된 모든 Emitter를 제거한다.")
     void deleteAllEventCacheStartWithId() throws Exception {
         // Given
-        Long memberNumber = 1L;
-        String eventCacheId1 = memberNumber + "_" + System.currentTimeMillis();
+        String memberId = "wnsdhqo";
+        String eventCacheId1 = memberId + "_" + System.currentTimeMillis();
         Notification notification1 = createNotification("거래 성사1", "test/url1");
 
         emitterRepository.saveEventCache(eventCacheId1, notification1);
 
         Thread.sleep(100);
-        String eventCacheId2 = memberNumber + "_" + System.currentTimeMillis();
+        String eventCacheId2 = memberId + "_" + System.currentTimeMillis();
         Notification notification2 = createNotification("거래 성사2", "test/url2");
 
         emitterRepository.saveEventCache(eventCacheId2, notification2);
 
         // When
-        emitterRepository.deleteAllEventCacheStartWithMemberId(String.valueOf(memberNumber));
+        emitterRepository.deleteAllEventCacheStartWithMemberId(memberId);
 
         // Then
-        Assertions.assertEquals(0, emitterRepository.findAllEventCacheStartWithByMemberNumber(String.valueOf(memberNumber)).size());
+        Assertions.assertEquals(0, emitterRepository.findAllEventCacheStartWithByMemberId(memberId).size());
     }
 
     private Notification createNotification(String content, String relatedUrl) {

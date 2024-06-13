@@ -51,7 +51,6 @@ public class NotificationService {
                     .id(eventId)
                     .data(data)
                     .name("notification"));
-            System.out.println(data.toString());
         } catch (IOException e) {
             emitterRepository.deleteById(emitterId);
         }
@@ -62,7 +61,7 @@ public class NotificationService {
     }
 
     private void sendLostData(String lastEventId, String memberId, String emitterId, SseEmitter emitter) {
-        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberNumber(memberId);
+        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberId(memberId);
         eventCaches.entrySet().stream()
                 .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
                 .forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
@@ -71,9 +70,9 @@ public class NotificationService {
     public void send(Member receiver, String content, String relatedUrl, NotificationType notificationType) {
         Notification notification = notificationRepository.save(createNotification(receiver, content, relatedUrl, notificationType));
 
-        String receiverNumber = String.valueOf(receiver.getMemberNumber());
-        String eventId = receiverNumber + "_" + System.currentTimeMillis();
-        Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByMemberNumber(receiverNumber);
+        String receiverId = String.valueOf(receiver.getMemberId());
+        String eventId = receiverId + "_" + System.currentTimeMillis();
+        Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByMemberId(receiverId);
         emitters.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, notification);
