@@ -77,6 +77,7 @@ public class BidMapper {
 
     public static BuyingBidResponse toBuyingBidResponse(Bid bid) {
         return BuyingBidResponse.builder()
+                .productName(bid.getProduct().getProductName())
                 .size(bid.getSize())
                 .price(bid.getBidPrice())
                 .quantity(1)

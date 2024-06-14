@@ -6,8 +6,10 @@ import lombok.Builder;
 
 @Builder
 public record NotificationRequest(
+        long domainNumber,
         Member receiver,
         NotificationType notificationType,
         String content,
-        String relatedUrl) {
+        Object object
+) {
 }

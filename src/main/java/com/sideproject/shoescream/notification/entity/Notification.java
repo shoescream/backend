@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -20,11 +22,11 @@ public class Notification {
     @Column(name = "notification_number")
     private Long notificationNumber;
 
-    @Column(name = "notification_content")
-    private String content;
+    @Column(name = "domain_number")
+    private Long domainNumber;
 
-    @Column(name = "related_url")
-    private String relatedUrl;
+    @Column(name = "notification_content")
+    private String notificationContent;
 
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
@@ -32,6 +34,12 @@ public class Notification {
     @ManyToOne
     @JoinColumn(name = "receiver_number")
     private Member receiver;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "is_read")
+    private boolean isRead;
 
     protected Notification() {
 

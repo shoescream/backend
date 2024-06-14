@@ -7,21 +7,21 @@ import com.sideproject.shoescream.bid.entity.Bid;
 import com.sideproject.shoescream.bid.entity.Deal;
 import com.sideproject.shoescream.bid.repository.BidRepository;
 import com.sideproject.shoescream.bid.repository.DealRepository;
+import com.sideproject.shoescream.bid.util.BidMapper;
 import com.sideproject.shoescream.global.exception.ErrorCode;
 
 import com.sideproject.shoescream.member.dto.request.KaKaoSignInRequest;
-import com.sideproject.shoescream.member.dto.request.MemberFindMemberInfoRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
-import com.sideproject.shoescream.member.dto.response.MemberResponse;
-import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
-import com.sideproject.shoescream.member.dto.response.MyBuyingHistoryResponse;
-import com.sideproject.shoescream.member.dto.response.MySellingHistoryResponse;
+import com.sideproject.shoescream.member.dto.response.*;
 import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.exception.*;
 import com.sideproject.shoescream.member.repository.MemberRepository;
 import com.sideproject.shoescream.member.util.JwtTokenUtil;
 import com.sideproject.shoescream.member.util.MemberMapper;
+import com.sideproject.shoescream.notification.constant.NotificationType;
+import com.sideproject.shoescream.notification.entity.Notification;
+import com.sideproject.shoescream.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,7 +31,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +41,7 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final BidRepository bidRepository;
     private final DealRepository dealRepository;
+    private final NotificationRepository notificationRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final BCryptPasswordEncoder encoder;
 
@@ -164,6 +164,35 @@ public class MemberService implements UserDetailsService {
         return filterMyFinishedByDateRange(startDate, endDate, member).stream()
                 .map(MemberMapper::toMySellingFinishedDealHistoryResponse)
                 .collect(Collectors.toList());
+    }
+
+    public List<MyNotificationResponse> getMyNotifications(String memberId) {
+        List<Notification> notifications = notificationRepository.findNotificationsByReceiverIdOrderByCreatedAtDesc(memberId);
+
+        return notifications.stream()
+                .map(notification -> {
+                    if (notification.getNotificationType() == NotificationType.PAYMENT) {
+                        Bid bid = bidRepository.findById(notification.getDomainNumber())
+                                .orElseThrow(() -> new RuntimeException("Bid not found"));
+                        return MemberMapper.toMyNotificationResponse(notification, BidMapper.toBuyingBidResponse(bid));
+                    }
+                    return MemberMapper.toMyNotificationResponse(notification, new Object());
+                })
+                .collect(Collectors.toList());
+    }
+
+    public MyNotificationResponse getMyNotification(String notificationNumber, String memberId) {
+        Notification notification = notificationRepository.findById(Long.valueOf(notificationNumber))
+                .orElseThrow(() -> new RuntimeException("알림 없음"));
+
+        if (notification.getNotificationType().name().equals(NotificationType.PAYMENT.name())) {
+            Bid bid = bidRepository.findById(notification.getDomainNumber())
+                    .orElseThrow(() -> new RuntimeException());
+            return MemberMapper.toMyNotificationResponse(notification,
+                    BidMapper.toBuyingBidResponse(bid));
+        }
+
+        return MemberMapper.toMyNotificationResponse(notification, new Object());
     }
 
     private List<Bid> filterMyBiddingByDateRange(LocalDate startDate, LocalDate endDate, Member member, String bidType) {

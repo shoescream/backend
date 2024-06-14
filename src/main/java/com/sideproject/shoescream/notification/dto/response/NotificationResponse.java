@@ -1,24 +1,27 @@
 package com.sideproject.shoescream.notification.dto.response;
 
+import com.sideproject.shoescream.notification.dto.request.NotificationRequest;
 import com.sideproject.shoescream.notification.entity.Notification;
 import lombok.Builder;
 
 @Builder
 public record NotificationResponse(
-        Long id,
+        long notificationNumber,
         String receiver,
         String content,
         String relatedUrl,
-        String type
+        String notificationType,
+        Object object
 ) {
 
-    public static NotificationResponse createNotificationResponse(Notification notification) {
+    public static NotificationResponse createNotificationResponse(Notification notification, NotificationRequest notificationRequest) {
         return NotificationResponse.builder()
-                .id(notification.getNotificationNumber())
+                .notificationNumber(notification.getNotificationNumber())
                 .receiver(notification.getReceiver().getMemberId())
-                .content(notification.getContent())
+                .content(notification.getNotificationContent())
                 .relatedUrl("/test/url")
-                .type(notification.getNotificationType().toString())
+                .notificationType(notification.getNotificationType().toString())
+                .object(notificationRequest.object())
                 .build();
     }
 }

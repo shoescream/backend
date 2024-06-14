@@ -5,10 +5,7 @@ import com.sideproject.shoescream.member.dto.request.KaKaoSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberFindMemberInfoRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
-import com.sideproject.shoescream.member.dto.response.MemberResponse;
-import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
-import com.sideproject.shoescream.member.dto.response.MyBuyingHistoryResponse;
-import com.sideproject.shoescream.member.dto.response.MySellingHistoryResponse;
+import com.sideproject.shoescream.member.dto.response.*;
 import com.sideproject.shoescream.member.service.EmailService;
 import com.sideproject.shoescream.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -79,5 +75,15 @@ public class MemberController {
             Authentication authentication) {
         return Response.success(memberService.getMySellingHistory(status, startDate, endDate, authentication));
 
+    }
+
+    @GetMapping("/my/notification")
+    public Response<List<MyNotificationResponse>> getMyNotifications(Authentication authentication) {
+        return Response.success(memberService.getMyNotifications(authentication.getName()));
+    }
+
+    @GetMapping("/my/notification/{notificationNumber}")
+    public Response<MyNotificationResponse> getMyNotification(@PathVariable String notificationNumber, Authentication authentication) {
+        return Response.success(memberService.getMyNotification(notificationNumber, authentication.getName()));
     }
 }

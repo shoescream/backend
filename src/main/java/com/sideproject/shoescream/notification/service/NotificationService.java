@@ -2,6 +2,7 @@ package com.sideproject.shoescream.notification.service;
 
 import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.repository.MemberRepository;
+import com.sideproject.shoescream.notification.dto.request.NotificationRequest;
 import com.sideproject.shoescream.notification.dto.response.NotificationResponse;
 import com.sideproject.shoescream.notification.constant.NotificationType;
 import com.sideproject.shoescream.notification.entity.Notification;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
@@ -67,26 +69,33 @@ public class NotificationService {
                 .forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
     }
 
-    public void send(Member receiver, String content, String relatedUrl, NotificationType notificationType) {
-        Notification notification = notificationRepository.save(createNotification(receiver, content, relatedUrl, notificationType));
+    public void send(NotificationRequest notificationRequest) {
+        Notification notification = notificationRepository.save(createNotification(
+                notificationRequest.domainNumber(),
+                notificationRequest.receiver(),
+                notificationRequest.content(),
+                notificationRequest.notificationType()));
 
-        String receiverId = String.valueOf(receiver.getMemberId());
+        String receiverId = String.valueOf(notificationRequest.receiver().getMemberId());
         String eventId = receiverId + "_" + System.currentTimeMillis();
         Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByMemberId(receiverId);
         emitters.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, notification);
-                    sendNotification(emitter, eventId, key, NotificationResponse.createNotificationResponse(notification));
+                    sendNotification(emitter, eventId, key, NotificationResponse.createNotificationResponse(notification, notificationRequest));
                 }
         );
     }
 
-    private Notification createNotification(Member receiver, String content, String relatedUrl, NotificationType notificationType) {
+    private Notification createNotification(Long domainNumber, Member receiver, String content, NotificationType notificationType) {
+        LocalDateTime now = LocalDateTime.now();
         return Notification.builder()
+                .domainNumber(domainNumber)
                 .receiver(receiver)
-                .content(content)
-                .relatedUrl(relatedUrl)
+                .notificationContent(content)
                 .notificationType(notificationType)
+                .createdAt(now)
+                .isRead(false)
                 .build();
     }
 }

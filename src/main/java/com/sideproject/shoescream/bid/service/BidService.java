@@ -109,10 +109,11 @@ public class BidService {
 
     private NotificationRequest createNotificationRequest(Bid buyBidInfo) {
         return NotificationRequest.builder()
+                .domainNumber(buyBidInfo.getBidNumber())
                 .receiver(buyBidInfo.getMember())
                 .notificationType(NotificationType.PAYMENT)
                 .content("결제 알림")
-                .relatedUrl("test/url")
+                .object(BidMapper.toBuyingBidResponse(buyBidInfo))
                 .build();
     }
 

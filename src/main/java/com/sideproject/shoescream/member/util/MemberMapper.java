@@ -5,11 +5,7 @@ import com.sideproject.shoescream.bid.entity.Deal;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.*;
 import com.sideproject.shoescream.member.entity.Member;
-import com.sideproject.shoescream.product.entity.Product;
-import com.sideproject.shoescream.product.util.ProductMapper;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import com.sideproject.shoescream.notification.entity.Notification;
 
 public class MemberMapper {
 
@@ -114,6 +110,27 @@ public class MemberMapper {
                 .size(myDeal.getSize())
                 .tradedAt(myDeal.getTradedAt())
                 .status(myDeal.getDealStatus().getDealStatus())
+                .build();
+    }
+
+    public static MyNotificationResponse toMyNotificationResponse(Notification notification) {
+        return MyNotificationResponse.builder()
+                .notificationNumber(notification.getNotificationNumber())
+                .notificationContent(notification.getNotificationContent())
+                .notificationType(notification.getNotificationType())
+                .buyerId(notification.getReceiver().getMemberId())
+                .createdAt(notification.getCreatedAt())
+                .build();
+    }
+
+    public static MyNotificationResponse toMyNotificationResponse(Notification notification, Object object){
+        return MyNotificationResponse.builder()
+                .notificationNumber(notification.getNotificationNumber())
+                .notificationContent(notification.getNotificationContent())
+                .notificationType(notification.getNotificationType())
+                .buyerId(notification.getReceiver().getMemberId())
+                .createdAt(notification.getCreatedAt())
+                .object(object)
                 .build();
     }
 }
