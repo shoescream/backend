@@ -166,6 +166,15 @@ public class MemberService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
+    public List<MyWritableReviewResponse> getMyWritableReviews(String memberId) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        List<Deal> deal = dealRepository.findDealsForWriteReview(member.getMemberNumber(), DealStatus.SUCCESS_DEAL);
+        return deal.stream()
+                .map(MemberMapper::toMyWritableReviewResponse)
+                .collect(Collectors.toList());
+    }
+
     public List<MyNotificationResponse> getMyNotifications(String memberId) {
         List<Notification> notifications = notificationRepository.findNotificationsByReceiverIdOrderByCreatedAtDesc(memberId);
 

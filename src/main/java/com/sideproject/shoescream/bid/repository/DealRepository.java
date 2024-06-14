@@ -1,5 +1,6 @@
 package com.sideproject.shoescream.bid.repository;
 
+import com.sideproject.shoescream.bid.constant.DealStatus;
 import com.sideproject.shoescream.bid.entity.Deal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +14,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
 
     @Query("select d from Deal d where d.buyerNumber=:memberNumber or d.sellerNumber=:memberNumber")
     List<Deal> findByMemberNumber(@Param("memberNumber") Long memberNumber);
+
+    @Query(value = "select d from Deal d where d.buyerNumber=:memberNumber and d.isWriteReview = false and d.dealStatus=:dealStatus")
+    List<Deal> findDealsForWriteReview(@Param("memberNumber") Long memberNumber, @Param("dealStatus") DealStatus dealStatus);
 }
