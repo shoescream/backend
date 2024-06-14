@@ -57,7 +57,6 @@ public class Bid {
     }
 
     public void publishEvent(ApplicationEventPublisher eventPublisher, NotificationRequest notificationRequest) {
-        System.out.println("하이");
         eventPublisher.publishEvent(notificationRequest);
     }
 }
