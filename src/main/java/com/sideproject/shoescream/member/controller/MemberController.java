@@ -77,6 +77,11 @@ public class MemberController {
 
     }
 
+    @GetMapping("/my/review")
+    public Response<List<MyWritableReviewResponse>> getMyWritableReviewResponse(Authentication authentication) {
+        return Response.success(memberService.getMyWritableReviews(authentication.getName()));
+    }
+
     @GetMapping("/my/notification")
     public Response<List<MyNotificationResponse>> getMyNotifications(Authentication authentication) {
         return Response.success(memberService.getMyNotifications(authentication.getName()));

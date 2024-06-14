@@ -113,6 +113,18 @@ public class MemberMapper {
                 .build();
     }
 
+    public static MyWritableReviewResponse toMyWritableReviewResponse(Deal deal) {
+        return MyWritableReviewResponse.builder()
+                .productNumber(deal.getProduct().getProductNumber())
+                .productName(deal.getProduct().getProductName())
+                .productSubName(deal.getProduct().getProductSubName())
+                .productImage(deal.getProduct().getProductImages().get(0).getProductImage())
+                .dealSize(deal.getSize())
+                .dealPrice(deal.getPrice())
+                .writeDeadLine(deal.getTradedAt().plusWeeks(2))
+                .build();
+    }
+
     public static MyNotificationResponse toMyNotificationResponse(Notification notification) {
         return MyNotificationResponse.builder()
                 .notificationNumber(notification.getNotificationNumber())
