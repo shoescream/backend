@@ -23,8 +23,8 @@ public class KakaoPayController {
     }
 
     @GetMapping("/success")
-    public ResponseEntity<?> afterPayRequest(@RequestParam("pg_token") String pgToken) {
-        KakaoApproveResponse kakaoApprove = kakaoPayService.approveResponse(pgToken);
+    public ResponseEntity<?> afterPayRequest(@RequestParam("pg_token") String pgToken, @RequestParam("bidNumber") long bidNumber, @RequestParam("memberId") String memberId) {
+        KakaoApproveResponse kakaoApprove = kakaoPayService.approveResponse(pgToken, bidNumber, memberId);
         return new ResponseEntity<>(kakaoApprove, HttpStatus.OK);
     }
 }
