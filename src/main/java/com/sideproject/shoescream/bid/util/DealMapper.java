@@ -18,6 +18,21 @@ import java.util.stream.Stream;
 
 public class DealMapper {
 
+    public static Deal toSuccessDeal(Bid bid, long buyerNumber) {
+        LocalDateTime now = LocalDateTime.now();
+        return Deal.builder()
+                .buyerNumber(buyerNumber)
+                .sellerNumber(bid.getMember().getMemberNumber())
+                .product(bid.getProduct())
+                .size(bid.getSize())
+                .price(bid.getBidPrice())
+                .dealStatus(DealStatus.SUCCESS_DEAL)
+                .createdAt(now)
+                .tradedAt(now)
+                .isWriteReview(false)
+                .build();
+    }
+
     public static DealResponse toDealResponse(Deal deal) {
         return DealResponse.builder()
                 .size(deal.getSize())
