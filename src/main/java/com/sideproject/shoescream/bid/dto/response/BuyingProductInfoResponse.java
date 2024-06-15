@@ -4,6 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record BuyingProductInfoResponse(
+        long bidNumber,
+
         String productCode,
 
         String productName,

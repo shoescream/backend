@@ -18,12 +18,10 @@ import com.sideproject.shoescream.notification.dto.request.NotificationRequest;
 import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.entity.ProductOption;
 import com.sideproject.shoescream.product.exception.ProductNotFoundException;
-import com.sideproject.shoescream.product.repository.ProductImageRepository;
 import com.sideproject.shoescream.product.repository.ProductOptionRepository;
 import com.sideproject.shoescream.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,9 +36,10 @@ public class BidService {
     private final ApplicationEventPublisher eventPublisher;
     private final DealRepository dealRepository;
 
-    public BuyingProductInfoResponse getBuyingProductInfo(String productNumber, String size) {
+    public BuyingProductInfoResponse getBuyingProductInfo(String productNumber, String size, String memberId) {
         ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(Long.valueOf(productNumber), size);
-        return BidMapper.toBuyingProductInfoResponse(product);
+        Bid targetBid = bidRepository.findTargetBidOne(Long.valueOf(productNumber), product.getLowestPrice(), product.getSize(), BidType.SELL_BID).get(0);
+        return BidMapper.toBuyingProductInfoResponse(product, targetBid.getBidNumber());
     }
 
     @Transactional
@@ -56,7 +55,7 @@ public class BidService {
     }
 
 
-    public SellingProductInfoResponse getSellingProductInfo(String productNumber, String size) {
+    public SellingProductInfoResponse getSellingProductInfo(String productNumber, String size, String memberId) {
         ProductOption product = productOptionRepository.findByProduct_ProductNumberAndSize(Long.valueOf(productNumber), size);
         return BidMapper.toSellingProductInfoResponse(product);
     }
