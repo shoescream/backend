@@ -3,6 +3,7 @@ package com.sideproject.shoescream.notification.service;
 import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.repository.MemberRepository;
 import com.sideproject.shoescream.notification.constant.NotificationType;
+import com.sideproject.shoescream.notification.dto.request.NotificationRequest;
 import com.sideproject.shoescream.notification.entity.Notification;
 import com.sideproject.shoescream.notification.repository.EmitterRepository;
 import com.sideproject.shoescream.notification.repository.NotificationRepository;
@@ -60,13 +61,13 @@ class NotificationServiceTest {
         SseEmitter sseEmitter = new SseEmitter();
         String lastEventId = "";
         given(emitterRepository.save(anyString(), any(SseEmitter.class))).willReturn(sseEmitter);
-        given(notificationRepository.save(any(Notification.class))).willReturn(createNotification(member, "결제 알림", "test/url", NotificationType.PAYMENT));
+        given(notificationRepository.save(any(Notification.class))).willReturn(createNotification(1L, member, "gd", NotificationType.PAYMENT));
 
         // When
         notificationService.subscribe(member.getMemberId(), lastEventId);
 
         // Then
-        Assertions.assertDoesNotThrow(() -> notificationService.send(member, "결제 알림", "test/url", NotificationType.PAYMENT));
+        Assertions.assertDoesNotThrow(() -> notificationService.send(createNotificationRequest(member)));
     }
 
     private Member createMember(String memberId) {
@@ -79,12 +80,23 @@ class NotificationServiceTest {
                 .build();
     }
 
-    private Notification createNotification(Member receiver, String content, String relatedUrl, NotificationType notificationType) {
+    private Notification createNotification(long domainNumber, Member receiver, String content, NotificationType notificationType) {
         return Notification.builder()
+                .domainNumber(domainNumber)
                 .receiver(receiver)
-                .content(content)
-                .relatedUrl(relatedUrl)
+                .notificationContent(content)
                 .notificationType(notificationType)
                 .build();
+    }
+
+    private NotificationRequest createNotificationRequest(Member receiver) {
+        return NotificationRequest.builder()
+                .domainNumber(1L)
+                .receiver(receiver)
+                .notificationType(NotificationType.PAYMENT)
+                .content("하이")
+                .object(new Object())
+                .build();
+
     }
 }
