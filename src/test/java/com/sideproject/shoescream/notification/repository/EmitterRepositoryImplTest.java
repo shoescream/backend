@@ -147,8 +147,7 @@ class EmitterRepositoryImplTest {
 
     private Notification createNotification(String content, String relatedUrl) {
         return Notification.builder()
-                .content(content)
-                .relatedUrl(relatedUrl)
+                .notificationContent(content)
                 .receiver(createMember(1L))
                 .notificationType(NotificationType.PAYMENT)
                 .build();
