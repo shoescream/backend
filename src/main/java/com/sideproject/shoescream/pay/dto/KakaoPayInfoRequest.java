@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record KakaoPayInfoRequest(
-    long bidNumber,
+    long bid_number,
     String item_name,
     int quantity,
     int total_amount

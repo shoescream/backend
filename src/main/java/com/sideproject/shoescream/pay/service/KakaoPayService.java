@@ -42,7 +42,7 @@ public class KakaoPayService {
         parameters.add("total_amount", String.valueOf(kakaoPayInfoRequest.total_amount()));
         parameters.add("vat_amount", "0");
         parameters.add("tax_free_amount", "0");
-        parameters.add("approval_url", "http://localhost:8080/payment/success?bidNumber=" + kakaoPayInfoRequest.bidNumber() + "&memberId=" + memberId); // 성공 시 redirect url
+        parameters.add("approval_url", "http://localhost:8080/payment/success?bidNumber=" + kakaoPayInfoRequest.bid_number() + "&memberId=" + memberId); // 성공 시 redirect url
         parameters.add("cancel_url", "http://localhost:8080/payment/cancel"); // 취소 시 redirect url
         parameters.add("fail_url", "http://localhost:8080/payment/fail"); // 실패 시 redirect url
 
