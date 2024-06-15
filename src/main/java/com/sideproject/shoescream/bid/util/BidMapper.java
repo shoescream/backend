@@ -50,8 +50,9 @@ public class BidMapper {
                 .build();
     }
 
-    public static BuyingProductInfoResponse toBuyingProductInfoResponse(ProductOption productOption) {
+    public static BuyingProductInfoResponse toBuyingProductInfoResponse(ProductOption productOption, long bidNumber) {
         return BuyingProductInfoResponse.builder()
+                .bidNumber(bidNumber)
                 .productCode(productOption.getProduct().getProductCode())
                 .productName(productOption.getProduct().getProductName())
                 .productSubName(productOption.getProduct().getProductSubName())
