@@ -183,7 +183,8 @@ public class MemberService implements UserDetailsService {
                     if (notification.getNotificationType() == NotificationType.PAYMENT) {
                         Bid bid = bidRepository.findById(notification.getDomainNumber())
                                 .orElseThrow(() -> new RuntimeException("Bid not found"));
-                        return MemberMapper.toMyNotificationResponse(notification, BidMapper.toBuyingBidResponse(bid));
+                        String productImageUrl = bid.getProduct().getProductImages().get(0).getProductImage();
+                        return MemberMapper.toMyNotificationResponse(notification, BidMapper.toBuyingBidResponse(bid, productImageUrl));
                     }
                     return MemberMapper.toMyNotificationResponse(notification, new Object());
                 })

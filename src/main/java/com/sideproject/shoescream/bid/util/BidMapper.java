@@ -86,6 +86,17 @@ public class BidMapper {
                 .build();
     }
 
+    public static BuyingBidResponse toBuyingBidResponse(Bid bid, String productImageUrl) {
+        return BuyingBidResponse.builder()
+                .productName(bid.getProduct().getProductName())
+                .productImage(productImageUrl)
+                .size(bid.getSize())
+                .price(bid.getBidPrice())
+                .quantity(1)
+                .createdAt(bid.getCreatedAt())
+                .build();
+    }
+
     public static BidHistoryResponse toBidHistoryResponse(Product product, String size) {
         if ("allSize".equals(size)) {
             return BidHistoryResponse.builder()

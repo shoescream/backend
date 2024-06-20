@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Builder
 public record BuyingBidResponse(
         String productName,
+        String productImage,
         String size,
         int price,
         int quantity,
