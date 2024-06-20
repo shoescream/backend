@@ -79,10 +79,6 @@ public class ReviewService {
         Deal deal = dealRepository.findById(reviewPostRequest.dealNumber())
                 .orElseThrow(() -> new RuntimeException());
 
-        //TODO : 거래 DB isWriteReview 기본 값 false로 들어가게 하기 지금 null 이라서 nullexception 뜸
-        if (deal.getIsWriteReview()) {
-            throw new RuntimeException();
-        }
         deal.setIsWriteReview(true);
         Review review = reviewRepository.save(
                 ReviewMapper.toReview(reviewPostRequest, member, product));
