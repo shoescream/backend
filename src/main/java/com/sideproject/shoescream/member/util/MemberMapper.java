@@ -115,6 +115,7 @@ public class MemberMapper {
 
     public static MyWritableReviewResponse toMyWritableReviewResponse(Deal deal) {
         return MyWritableReviewResponse.builder()
+                .dealNumber(deal.getDealNumber())
                 .productNumber(deal.getProduct().getProductNumber())
                 .productName(deal.getProduct().getProductName())
                 .productSubName(deal.getProduct().getProductSubName())
@@ -122,6 +123,7 @@ public class MemberMapper {
                 .dealSize(deal.getSize())
                 .dealPrice(deal.getPrice())
                 .writeDeadLine(deal.getTradedAt().plusWeeks(2))
+                .isWriteReview(deal.getIsWriteReview())
                 .build();
     }
 

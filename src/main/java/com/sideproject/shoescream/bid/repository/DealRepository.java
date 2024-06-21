@@ -15,6 +15,6 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     @Query("select d from Deal d where d.buyerNumber=:memberNumber or d.sellerNumber=:memberNumber")
     List<Deal> findByMemberNumber(@Param("memberNumber") Long memberNumber);
 
-    @Query(value = "select d from Deal d where d.buyerNumber=:memberNumber and d.isWriteReview = false and d.dealStatus=:dealStatus")
-    List<Deal> findDealsForWriteReview(@Param("memberNumber") Long memberNumber, @Param("dealStatus") DealStatus dealStatus);
+    @Query("select d from Deal d where d.buyerNumber=:memberNumber and d.isWriteReview=:isWriteReview and d.dealStatus=:dealStatus")
+    List<Deal> findDealsForWriteReview(@Param("memberNumber") Long memberNumber, @Param("dealStatus") DealStatus dealStatus, @Param("isWriteReview") Boolean isWriteReview);
 }

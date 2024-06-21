@@ -6,12 +6,14 @@ import java.time.LocalDateTime;
 
 @Builder
 public record MyWritableReviewResponse(
+        long dealNumber,
         long productNumber,
         String productName,
         String productSubName,
         String productImage,
         String dealSize,
         int dealPrice,
-        LocalDateTime writeDeadLine
+        LocalDateTime writeDeadLine,
+        Boolean isWriteReview
 ) {
 }
