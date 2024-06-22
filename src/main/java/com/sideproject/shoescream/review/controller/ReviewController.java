@@ -3,6 +3,7 @@ package com.sideproject.shoescream.review.controller;
 import com.sideproject.shoescream.global.dto.response.Response;
 import com.sideproject.shoescream.review.dto.request.ReviewCommentPostRequest;
 import com.sideproject.shoescream.review.dto.request.ReviewPostRequest;
+import com.sideproject.shoescream.review.dto.request.ReviewUpdateRequest;
 import com.sideproject.shoescream.review.dto.response.ReviewCommentResponse;
 import com.sideproject.shoescream.review.dto.response.ReviewResponse;
 import com.sideproject.shoescream.review.service.ReviewService;
@@ -46,10 +47,10 @@ public class ReviewController {
 
     // 게시글 수정
     @PostMapping("/review/update/{reviewNumber}")
-    public Response<ReviewResponse> updateReview(@RequestBody ReviewPostRequest reviewPostRequest,
+    public Response<ReviewResponse> updateReview(@RequestBody ReviewUpdateRequest reviewUpdateRequest,
                                                  @PathVariable(value = "reviewNumber") Long reviewNumber,
                                                  Authentication authentication) {
-        return Response.success(reviewService.updateReview(reviewPostRequest, reviewNumber, authentication.getName()));
+        return Response.success(reviewService.updateReview(reviewUpdateRequest, reviewNumber, authentication.getName()));
     }
 
     // 게시글 삭제

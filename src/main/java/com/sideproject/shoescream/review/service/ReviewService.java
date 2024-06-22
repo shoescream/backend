@@ -11,6 +11,7 @@ import com.sideproject.shoescream.product.entity.Product;
 import com.sideproject.shoescream.product.repository.ProductRepository;
 import com.sideproject.shoescream.review.dto.request.ReviewCommentPostRequest;
 import com.sideproject.shoescream.review.dto.request.ReviewPostRequest;
+import com.sideproject.shoescream.review.dto.request.ReviewUpdateRequest;
 import com.sideproject.shoescream.review.dto.response.ReviewCommentResponse;
 import com.sideproject.shoescream.review.dto.response.ReviewResponse;
 import com.sideproject.shoescream.review.entity.Review;
@@ -96,7 +97,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewResponse updateReview(ReviewPostRequest reviewPostRequest, Long reviewNumber, String memberId) {
+    public ReviewResponse updateReview(ReviewUpdateRequest reviewUpdateRequest, Long reviewNumber, String memberId) {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         Review review = reviewRepository.findById(reviewNumber)
@@ -105,9 +106,9 @@ public class ReviewService {
         if (!Objects.equals(member.getMemberNumber(), review.getMember().getMemberNumber())) {
             throw new RuntimeException();
         }
-        review.setReviewTitle(reviewPostRequest.reviewTitle());
-        review.setReviewContent(reviewPostRequest.reviewContent());
-        review.setRating(reviewPostRequest.rating());
+        review.setReviewTitle(reviewUpdateRequest.reviewTitle());
+        review.setReviewContent(reviewUpdateRequest.reviewContent());
+        review.setRating(reviewUpdateRequest.rating());
 
         return ReviewMapper.toUpdateReviewResponse(review);
     }
