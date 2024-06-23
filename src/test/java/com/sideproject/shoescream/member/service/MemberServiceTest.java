@@ -3,7 +3,6 @@ package com.sideproject.shoescream.member.service;
 import com.sideproject.shoescream.member.dto.request.MemberSignInRequest;
 import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.MemberResponse;
-import com.sideproject.shoescream.member.dto.response.MemberSignInResponse;
 import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.repository.MemberRepository;
 import com.sideproject.shoescream.member.util.JwtTokenUtil;
