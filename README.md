@@ -34,8 +34,7 @@ Back-End
 
 ---
 
-## 📚 API 명세서
-
+## 📚 API 명세서 [Click](https://www.notion.so/API-dff7ba4cbafb44da8063a4e787975ebc)
 
 ---
 
