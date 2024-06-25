@@ -35,7 +35,7 @@ Back-End
 ---
 
 ## 📚 API 명세서 [Click](https://www.notion.so/API-dff7ba4cbafb44da8063a4e787975ebc)
-
+<img src="https://github.com/shoescream/backend/assets/109403631/93a40a5b-dd5f-4c9a-8784-4cf4433b2870">
 ---
 
 ## 🌟 주요 기능
