@@ -67,7 +67,7 @@ Back-End
 ---
 
 ## 🚧 프로젝트 아키텍처
-
+<img src="https://github.com/shoescream/backend/assets/109403631/dfcdf833-9553-4d4b-b4b3-78b471f84fca">
 ---
 
 ## 📈 성능 최적화 및 트러블슈팅
