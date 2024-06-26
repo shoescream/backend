@@ -34,9 +34,8 @@ Back-End
 
 ---
 
-## 📚 API 명세서
-
-
+## 📚 API 명세서 [Click](https://www.notion.so/API-dff7ba4cbafb44da8063a4e787975ebc)
+<img src="https://github.com/shoescream/backend/assets/109403631/93a40a5b-dd5f-4c9a-8784-4cf4433b2870">
 ---
 
 ## 🌟 주요 기능
@@ -53,10 +52,7 @@ Back-End
 
 ## 🛠 기술 스택
 
-### 🖥 Frontend
-
 ### 🖥 Backend
-
 - Java17
 - Spring Boot
 - Spring Security
@@ -65,10 +61,17 @@ Back-End
 - SSE(Servcer-Sent-Events)
 - AWS EC2, S3
 - Nginx
+
+### 🖥 Frontend
+- JavaScript
+- TypeScript
+- React.js
+- Next.js
+- Html/Css(styled-components)
 ---
 
 ## 🚧 프로젝트 아키텍처
-
+<img src="https://github.com/shoescream/backend/assets/109403631/dfcdf833-9553-4d4b-b4b3-78b471f84fca">
 ---
 
 ## 📈 성능 최적화 및 트러블슈팅
