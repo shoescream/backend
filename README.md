@@ -52,10 +52,7 @@ Back-End
 
 ## 🛠 기술 스택
 
-### 🖥 Frontend
-
 ### 🖥 Backend
-
 - Java17
 - Spring Boot
 - Spring Security
@@ -64,6 +61,13 @@ Back-End
 - SSE(Servcer-Sent-Events)
 - AWS EC2, S3
 - Nginx
+
+### 🖥 Frontend
+- JavaScript
+- TypeScript
+- React.js
+- Next.js
+- Html/Css(styled-components)
 ---
 
 ## 🚧 프로젝트 아키텍처
