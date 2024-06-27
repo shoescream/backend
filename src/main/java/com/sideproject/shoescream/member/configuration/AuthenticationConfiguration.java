@@ -1,6 +1,8 @@
 package com.sideproject.shoescream.member.configuration;
 
 import com.sideproject.shoescream.member.configuration.filter.JwtTokenFilter;
+import com.sideproject.shoescream.member.configuration.handler.CustomAccessDeniedHandler;
+import com.sideproject.shoescream.member.configuration.handler.CustomAuthenticationEntryPointHandler;
 import com.sideproject.shoescream.member.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -30,9 +32,13 @@ public class AuthenticationConfiguration {
         http
                 .cors(corsConfigure -> corsConfigure.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/review/post").authenticated()
                         .requestMatchers(
                                 "/**"
                         ).permitAll())
+                .exceptionHandling(handler -> handler
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPointHandler())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler()))
                 .addFilterBefore(new JwtTokenFilter(userDetailsService, jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
