@@ -1,6 +1,7 @@
 package com.sideproject.shoescream.review.service;
 
 import com.sideproject.shoescream.bid.entity.Deal;
+import com.sideproject.shoescream.bid.exception.DealNotFoundException;
 import com.sideproject.shoescream.bid.repository.DealRepository;
 import com.sideproject.shoescream.global.exception.ErrorCode;
 import com.sideproject.shoescream.global.service.S3Service;
@@ -8,6 +9,7 @@ import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.member.exception.MemberNotFoundException;
 import com.sideproject.shoescream.member.repository.MemberRepository;
 import com.sideproject.shoescream.product.entity.Product;
+import com.sideproject.shoescream.product.exception.ProductNotFoundException;
 import com.sideproject.shoescream.product.repository.ProductRepository;
 import com.sideproject.shoescream.review.dto.request.ReviewCommentPostRequest;
 import com.sideproject.shoescream.review.dto.request.ReviewPostRequest;
@@ -75,25 +77,18 @@ public class ReviewService {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         Product product = productRepository.findById(productNumber)
-                .orElseThrow(() -> new RuntimeException("no product"));
-        List<String> reviewImagesUrl = s3Service.upload(reviewImages);
+                .orElseThrow(() -> new ProductNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
         Deal deal = dealRepository.findById(reviewPostRequest.dealNumber())
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new DealNotFoundException(ErrorCode.DEAL_NOT_FOUND));
 
-        deal.setIsWriteReview(true);
         Review review = reviewRepository.save(
                 ReviewMapper.toReview(reviewPostRequest, member, product));
-        List<String> imagesUrlList = new ArrayList<>();
+        List<String> reviewImagesResult = saveReviewImages(s3Service.upload(reviewImages), review);
 
-        for (String imgUrl : reviewImagesUrl) {
-            ReviewImage reviewImage = ReviewImage.builder()
-                    .reviewImageUrl(imgUrl)
-                    .review(review)
-                    .build();
-            reviewImageRepository.save(reviewImage);
-            imagesUrlList.add(reviewImage.getReviewImageUrl());
-        }
-        return ReviewMapper.toReviewResponse(review, imagesUrlList);
+        deal.setIsWriteReview(true);
+
+        return ReviewMapper.toReviewResponse(
+                review, reviewImagesResult);
     }
 
     @Transactional
@@ -168,5 +163,19 @@ public class ReviewService {
 
         reviewCommentRepository.deleteById(commentNumber);
         return "삭제 완료";
+    }
+
+    private List<String> saveReviewImages(List<String> reviewImagesInS3Bucket, Review savedReview) {
+        List<String> reviewImages = new ArrayList<>();
+
+        for (String imgUrl : reviewImagesInS3Bucket) {
+            ReviewImage reviewImage = ReviewImage.builder()
+                    .reviewImageUrl(imgUrl)
+                    .review(savedReview)
+                    .build();
+            reviewImageRepository.save(reviewImage);
+            reviewImages.add(reviewImage.getReviewImageUrl());
+        }
+        return reviewImages;
     }
 }
