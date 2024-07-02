@@ -1,12 +1,15 @@
 package com.sideproject.shoescream.review.entity;
 
+import com.sideproject.shoescream.global.exception.ErrorCode;
 import com.sideproject.shoescream.member.entity.Member;
 import com.sideproject.shoescream.product.entity.Product;
+import com.sideproject.shoescream.review.exception.InvalidReviewAccessRightException;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -48,4 +51,16 @@ public class Review {
 
     // No-args constructor for JPA
     protected Review() {}
+
+    public void updateReview(String reviewTitle, String reviewContent, int rating) {
+        this.reviewTitle = reviewTitle;
+        this.reviewContent = reviewContent;
+        this.rating = rating;
+    }
+
+    public void validateReviewAccessRight(Long accessorNumber) {
+        if (!Objects.equals(accessorNumber, this.member.getMemberNumber())) {
+            throw new InvalidReviewAccessRightException(ErrorCode.INVALID_REVIEW_ACCESS_RIGHT);
+        }
+    }
 }
