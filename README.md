@@ -86,3 +86,5 @@ Back-End
 
 - 1회차(2024.06.27) 
   - [리뷰 작성 메서드 리팩토링](https://github.com/shoescream/backend/pull/73)
+- 2회차(2024.07.02)
+  - [리뷰 서비스 DDD 적용 및 커스텀 예외처리(filter + servlet) 추가](https://github.com/shoescream/backend/pull/75)
