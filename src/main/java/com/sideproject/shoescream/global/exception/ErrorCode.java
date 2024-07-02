@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
     //Token
-    INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다."),
-    EXPIRED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 만료 됐습니다."),
-    FORBIDDEN_JWT_TOKEN(HttpStatus.FORBIDDEN, "금지된 토큰입니다."),
+    TOKEN_SIGNATURE_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다."),
+    TOKEN_EXPIRED_ERROR(HttpStatus.UNAUTHORIZED, "토큰이 만료 되었습니다.."),
+    TOKEN_NOT_EXIST(HttpStatus.NOT_FOUND, "토큰이 존재하지 않습니다."),
 
     //MEMBER
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원 정보를 찾을 수 없습니다."),
@@ -21,6 +21,14 @@ public enum ErrorCode {
     //PRODUCT
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
 
+    //REVIEW
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
+    INVALID_REVIEW_ACCESS_RIGHT(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다."),
+
+    //REVIEW_COMMENT
+    REVIEW_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰 댓글을 찾을 수 없습니다"),
+    INVALID_REVIEW_COMMENT_ACCESS_RIGHT(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다."),
+
     //BID
     DEAL_NOT_FOUND(HttpStatus.NOT_FOUND, "거래 내역을 찾을 수 없습니다.");
 
@@ -31,5 +39,4 @@ public enum ErrorCode {
         this.httpStatus = httpStatus;
         this.message = message;
     }
-
 }
