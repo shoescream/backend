@@ -31,7 +31,6 @@ public class ReviewController {
         return Response.success(reviewService.getRecentReviewsByProductNumber(productNumber));
     }
 
-    // reviewNumber로 통일
     @GetMapping("/review/{reviewNumber}")
     public Response<ReviewResponse> getReviewById(@PathVariable Long reviewNumber) {
         return Response.success(reviewService.getReviewById(reviewNumber));
@@ -45,7 +44,6 @@ public class ReviewController {
         return Response.success(reviewService.postReview(reviewPostRequest, reviewImages, productNumber, authentication.getName()));
     }
 
-    // 게시글 수정
     @PostMapping("/review/update/{reviewNumber}")
     public Response<ReviewResponse> updateReview(@RequestBody ReviewUpdateRequest reviewUpdateRequest,
                                                  @PathVariable(value = "reviewNumber") Long reviewNumber,
@@ -53,14 +51,15 @@ public class ReviewController {
         return Response.success(reviewService.updateReview(reviewUpdateRequest, reviewNumber, authentication.getName()));
     }
 
-    // 게시글 삭제
     @PostMapping("/review/delete/{reviewNumber}")
-    public Response<String> deleteReview(@PathVariable Long reviewNumber,
-                               Authentication authentication) {
-        return Response.success(reviewService.deleteReview(reviewNumber, authentication.getName()));
+    public Response<?> deleteReview(@PathVariable Long reviewNumber,
+                                    Authentication authentication) {
+        reviewService.deleteReview(reviewNumber, authentication.getName());
+        return Response.success();
     }
 
-    // 댓글 작성
+
+    //TODO: PathVariable로 reviewNumber를 전달 하는데 Body에 또 reviewNumber를 전달 -> 수정 필요
     @PostMapping("/review/{reviewNumber}/comments")
     public Response<ReviewCommentResponse> postReviewComment(@PathVariable Long reviewNumber,
                                                              @RequestBody ReviewCommentPostRequest reviewCommentPostRequest,
@@ -73,18 +72,14 @@ public class ReviewController {
     public Response<ReviewCommentResponse> updateReviewComment(@RequestBody ReviewCommentPostRequest reviewCommentPostRequest,
                                                                @PathVariable(value = "commentNumber") Long commentNumber,
                                                                Authentication authentication) {
-        // 예외 처리 수정 예정
-//        if (authentication == null || authentication.getName() == null) {
-//            return Response.failure("Authentication is required.");
-//        }
         return Response.success(reviewService.updateReviewComment(reviewCommentPostRequest, commentNumber, authentication.getName()));
     }
 
     // 댓글 삭제
     @PostMapping("/review/{commentNumber}/delete/comment")
-    public Response<String> deleteReviewComment(@PathVariable Long commentNumber,
-                                                Authentication authentication) {
-        return Response.success(reviewService.deleteReviewComment(commentNumber, authentication.getName()));
+    public Response<?> deleteReviewComment(@PathVariable Long commentNumber,
+                                           Authentication authentication) {
+        reviewService.deleteReviewComment(commentNumber, authentication.getName());
+        return Response.success();
     }
-
 }

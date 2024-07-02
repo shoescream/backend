@@ -1,10 +1,13 @@
 package com.sideproject.shoescream.review.entity;
 
+import com.sideproject.shoescream.global.exception.ErrorCode;
 import com.sideproject.shoescream.member.entity.Member;
+import com.sideproject.shoescream.review.exception.InvalidReviewCommentAccessRightException;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -32,17 +35,15 @@ public class ReviewComment {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // No-args constructor for JPA
     protected ReviewComment() {}
 
-    // 정적 팩토리 메서드를 추가
-    public static ReviewComment create(Member member, Review review, String commentContent) {
-        ReviewComment reviewComment = new ReviewComment();
-        reviewComment.member = member;
-        reviewComment.review = review;
-        reviewComment.commentContent = commentContent;
-        reviewComment.createdAt = LocalDateTime.now();
-        return reviewComment;
+    public void updateReview(String commentContent) {
+        this.commentContent = commentContent;
     }
 
+    public void validateReviewCommentAccessRight(Long accessorNumber) {
+        if (!Objects.equals(accessorNumber, this.member.getMemberNumber())) {
+            throw new InvalidReviewCommentAccessRightException(ErrorCode.INVALID_REVIEW_COMMENT_ACCESS_RIGHT);
+        }
+    }
 }
