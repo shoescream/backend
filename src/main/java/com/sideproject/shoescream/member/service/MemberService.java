@@ -52,10 +52,7 @@ public class MemberService implements UserDetailsService {
     }
 
     public MemberResponse signUp(MemberSignUpRequest memberSignUpRequest) {
-        checkMemberId(memberSignUpRequest.memberId());
-        checkPassword(memberSignUpRequest.password());
-        checkName(memberSignUpRequest.name());
-        // 이메일 인증 여부 예외 처리
+        checkDuplicateMemberId(memberSignUpRequest.memberId());
 
         return MemberMapper.toMemberResponse(memberRepository.save(
                 MemberMapper.toMember(memberSignUpRequest,
@@ -64,14 +61,11 @@ public class MemberService implements UserDetailsService {
 
     public MemberSignInResponse signIn(MemberSignInRequest memberSignInRequest) {
         Member member = memberRepository.findByMemberId(memberSignInRequest.memberId())
-                .orElseThrow(
-                        () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (!encoder.matches(memberSignInRequest.password(), member.getPassword())) {
-            throw new InvalidMemberIdAndPasswordException(ErrorCode.INVALID_USER_ID_AND_PASSWORD);
-        }
+        validatePassword(memberSignInRequest.password(), member.getPassword());
 
-        String accessToken = jwtTokenUtil.generateToken(member.getMemberId());
+        String accessToken = jwtTokenUtil.generateAccessToken(member.getMemberId());
         String refreshToken = jwtTokenUtil.generateRefreshToken(member.getMemberId());
 
         return MemberMapper.toSignInResponse(MemberMapper.toMemberResponse(member),
@@ -79,18 +73,10 @@ public class MemberService implements UserDetailsService {
     }
 
     public MemberSignInResponse kakaoLogin(KaKaoSignInRequest kaKaoSignInRequest) {
-        Member member = memberRepository.findByEmail(kaKaoSignInRequest.email()).orElse(null);
-        if (member == null) {
-            member = Member.builder()
-                    .memberNumber(kaKaoSignInRequest.id())
-                    .memberId("kakao" + kaKaoSignInRequest.id())
-                    .email(kaKaoSignInRequest.email())
-                    .name(kaKaoSignInRequest.nickname())
-                    .profileImage(kaKaoSignInRequest.profile_image())
-                    .build();
-            memberRepository.save(member);
-        }
-        String accessToken = jwtTokenUtil.generateToken(member.getMemberId());
+        Member member = memberRepository.findByEmail(kaKaoSignInRequest.email())
+                .orElseGet(() -> createKakaoMember(kaKaoSignInRequest));
+
+        String accessToken = jwtTokenUtil.generateAccessToken(member.getMemberId());
         String refreshToken = jwtTokenUtil.generateRefreshToken(member.getMemberId());
 
         return MemberMapper.toSignInResponse(MemberMapper.toMemberResponse(member),
@@ -99,30 +85,8 @@ public class MemberService implements UserDetailsService {
 
     public String findMemberId(String mail) {
         Member member = memberRepository.findByEmail(mail)
-                .orElseThrow(
-                        () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
-
+                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         return member.getMemberId();
-    }
-
-    private void checkMemberId(String memberId) {
-        if (memberRepository.existsByMemberId(memberId)) {
-            throw new AlreadyExistMemberIdException(ErrorCode.ALREADY_EXIST_USER_ID);
-        }
-    }
-
-    private void checkPassword(String password) {
-        String passwordPattern = "^(?=.*[A-Z])(?=.*[!@#$&*])(?=\\S+$).{9,}$";
-        if (!password.matches(passwordPattern)) {
-            throw new InvalidPasswordException(ErrorCode.INVALID_PASSWORD);
-        }
-    }
-
-    private void checkName(String name) {
-        String namePattern = "[\\p{L}\\d]{1,10}";
-        if (!name.matches(namePattern)) {
-            throw new InvalidMemberNameException(ErrorCode.INVALID_MEMBER_NAME);
-        }
     }
 
     public List<MyBuyingHistoryResponse> getMyBuyingHistory(String status, LocalDate startDate, LocalDate endDate, Authentication authentication) {
@@ -201,7 +165,6 @@ public class MemberService implements UserDetailsService {
             return MemberMapper.toMyNotificationResponse(notification,
                     BidMapper.toBuyingBidResponse(bid));
         }
-
         return MemberMapper.toMyNotificationResponse(notification, new Object());
     }
 
@@ -213,7 +176,6 @@ public class MemberService implements UserDetailsService {
                     .filter(bid -> bid.getBidStatus().getBidStatus().equals(BidStatus.WAITING_MATCHING.getBidStatus()))
                     .toList();
         }
-
         return myBiddingHistory.stream()
                 .filter(bid -> bid.getBidType().getBidType().equals(bidType))
                 .filter(bid -> bid.getBidStatus().getBidStatus().equals(BidStatus.WAITING_MATCHING.getBidStatus()))
@@ -230,7 +192,6 @@ public class MemberService implements UserDetailsService {
                             deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_DEPOSIT.getDealStatus()))
                     .toList();
         }
-
         return myPendingHistory.stream()
                 .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.WAITING_DEPOSIT.getDealStatus()) ||
                         deal.getDealStatus().getDealStatus().equals(DealStatus.COMPLETE_DEPOSIT.getDealStatus()))
@@ -248,12 +209,35 @@ public class MemberService implements UserDetailsService {
                             deal.getDealStatus().getDealStatus().equals(DealStatus.FAIL_DEAL.getDealStatus()))
                     .toList();
         }
-
         return myFinishedHistory.stream()
                 .filter(deal -> deal.getDealStatus().getDealStatus().equals(DealStatus.SUCCESS_DEAL.getDealStatus()) ||
                         deal.getDealStatus().getDealStatus().equals(DealStatus.FAIL_DEAL.getDealStatus()))
                 .filter(deal -> deal.getTradedAt().toLocalDate().isAfter(startDate) &&
                         deal.getTradedAt().toLocalDate().isBefore(endDate))
                 .toList();
+    }
+
+    private void checkDuplicateMemberId(String memberId) {
+        if (memberRepository.existsByMemberId(memberId)) {
+            throw new AlreadyExistMemberIdException(ErrorCode.ALREADY_EXIST_USER_ID);
+        }
+    }
+
+    private void validatePassword(String requestPassword, String encodedPassword) {
+        if (!encoder.matches(requestPassword, encodedPassword)) {
+            throw new InvalidPasswordException(ErrorCode.INVALID_PASSWORD);
+        }
+    }
+
+    private Member createKakaoMember(KaKaoSignInRequest kaKaoSignInRequest) {
+        Member newMember = Member.builder()
+                .memberNumber(kaKaoSignInRequest.id())
+                .memberId("kakao" + kaKaoSignInRequest.id())
+                .email(kaKaoSignInRequest.email())
+                .name(kaKaoSignInRequest.nickname())
+                .profileImage(kaKaoSignInRequest.profile_image())
+                .build();
+        memberRepository.save(newMember);
+        return newMember;
     }
 }

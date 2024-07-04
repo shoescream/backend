@@ -8,9 +8,11 @@ import com.sideproject.shoescream.member.dto.request.MemberSignUpRequest;
 import com.sideproject.shoescream.member.dto.response.*;
 import com.sideproject.shoescream.member.service.EmailService;
 import com.sideproject.shoescream.member.service.MemberService;
+import com.sideproject.shoescream.member.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -24,12 +26,12 @@ public class MemberController {
     private final EmailService emailService;
 
     @PostMapping("/signup")
-    public Response<MemberResponse> signUp(@RequestBody MemberSignUpRequest memberSignUpRequest) {
+    public Response<MemberResponse> signUp(@RequestBody @Validated(ValidationSequence.class) MemberSignUpRequest memberSignUpRequest) {
         return Response.success(memberService.signUp(memberSignUpRequest));
     }
 
     @PostMapping("/signin")
-    public Response<MemberSignInResponse> signIn(@RequestBody MemberSignInRequest memberSignInRequest) {
+    public Response<MemberSignInResponse> signIn(@RequestBody @Validated(ValidationSequence.class) MemberSignInRequest memberSignInRequest) {
         return Response.success(memberService.signIn(memberSignInRequest));
     }
 
