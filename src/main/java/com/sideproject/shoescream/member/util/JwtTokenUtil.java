@@ -56,7 +56,7 @@ public class JwtTokenUtil {
         return (userId.equals(member.getUsername())) && !isTokenExpired(token);
     }
 
-    public String generateToken(String userId) {
+    public String generateAccessToken(String userId) {
         Claims claims = Jwts.claims();
         claims.put("userId", userId);
 
