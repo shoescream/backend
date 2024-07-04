@@ -64,7 +64,7 @@ class MemberServiceTest {
         given(encoder.matches(any(), any())).willReturn(true);
 
         when(memberRepository.findByMemberId(member.getMemberId())).thenReturn(Optional.of(member));
-        when(jwtTokenUtil.generateToken(any())).thenReturn("asdfdasfasdfaasdfasdfassdfasdfsdfdasasdfasdffff");
+        when(jwtTokenUtil.generateAccessToken(any())).thenReturn("asdfdasfasdfaasdfasdfassdfasdfsdfdasasdfasdffff");
         when(jwtTokenUtil.generateRefreshToken(any())).thenReturn("asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasd");
         // Then
         Assertions.assertDoesNotThrow(() -> memberService.signIn(createMemberSignInRequest(member)));
