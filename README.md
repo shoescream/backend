@@ -90,3 +90,5 @@ Back-End
   - [리뷰 서비스 DDD 적용 및 커스텀 예외처리(filter + servlet) 추가](https://github.com/shoescream/backend/pull/75)
 - 3회차(2024.07.04)
   - [클라이언트에서 전송된 데이터 검증에 @Validated 적용](https://github.com/shoescream/backend/commit/363e4fec5e405fe6610134ad2271bc1786bd4b9b)
+- 4회차(2024.07.23)
+  - [제네릭 문법 학습 및 적용 준비](https://github.com/shoescream/backend/pull/77)
