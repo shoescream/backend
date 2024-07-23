@@ -22,6 +22,8 @@ import com.sideproject.shoescream.member.util.MemberMapper;
 import com.sideproject.shoescream.notification.constant.NotificationType;
 import com.sideproject.shoescream.notification.entity.Notification;
 import com.sideproject.shoescream.notification.repository.NotificationRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +47,19 @@ public class MemberService implements UserDetailsService {
     private final NotificationRepository notificationRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final BCryptPasswordEncoder encoder;
+
+    @Getter
+    @AllArgsConstructor
+    public static class TradeHistoryRequest<T> {
+        private String status;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private Authentication authentication;
+        private String bidType;
+        private Function<Bid, T> bidMapper;
+        private Function<Deal, T> pendingMapper;
+        private Function<Deal, T> finishedMapper;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
@@ -90,53 +106,23 @@ public class MemberService implements UserDetailsService {
     }
 
     public List<MyBuyingHistoryResponse> getMyBuyingHistory(String status, LocalDate startDate, LocalDate endDate, Authentication authentication) {
-        Member member = memberRepository.findByMemberId(authentication.getName())
-                .orElseThrow(() -> new RuntimeException());
-
-        if (status.equals("bidding")) {
-            List<Bid> buyingBids = filterMyBiddingByDateRange(startDate, endDate, member, BidType.BUY_BID.getBidType());
-            return buyingBids.stream()
-                    .map(MemberMapper::toMyBuyingBidHistoryResponse)
-                    .collect(Collectors.toList());
-        } else if (status.equals("pending")) {
-            List<Deal> pendingDeals = filterMyPendingByDateRange(startDate, endDate, member);
-            return pendingDeals.stream()
-                    .map(MemberMapper::toMyBuyingPendingDealHistoryResponse)
-                    .collect(Collectors.toList());
-        }
-
-        return filterMyFinishedByDateRange(startDate, endDate, member).stream()
-                .map(MemberMapper::toMyBuyingFinishedDealHistoryResponse)
-                .collect(Collectors.toList());
+        TradeHistoryRequest<MyBuyingHistoryResponse> request = new TradeHistoryRequest<>(
+                status, startDate, endDate, authentication, BidType.BUY_BID.getBidType(),
+                MemberMapper::toMyBuyingBidHistoryResponse,
+                MemberMapper::toMyBuyingPendingDealHistoryResponse,
+                MemberMapper::toMyBuyingFinishedDealHistoryResponse
+        );
+        return getHistory(request);
     }
 
     public List<MySellingHistoryResponse> getMySellingHistory(String status, LocalDate startDate, LocalDate endDate, Authentication authentication) {
-        Member member = memberRepository.findByMemberId(authentication.getName())
-                .orElseThrow(() -> new RuntimeException());
-
-        if (status.equals("bidding")) {
-            List<Bid> sellingBids = filterMyBiddingByDateRange(startDate, endDate, member, BidType.SELL_BID.getBidType());
-            return sellingBids.stream()
-                    .map(MemberMapper::toMySellingBidHistoryResponse)
-                    .collect(Collectors.toList());
-        } else if (status.equals("pending")) {
-            List<Deal> pendingDeals = filterMyPendingByDateRange(startDate, endDate, member);
-            return pendingDeals.stream()
-                    .map(MemberMapper::toMySellingPendingDealHistoryResponse)
-                    .collect(Collectors.toList());
-        }
-        return filterMyFinishedByDateRange(startDate, endDate, member).stream()
-                .map(MemberMapper::toMySellingFinishedDealHistoryResponse)
-                .collect(Collectors.toList());
-    }
-
-    public List<MyWritableReviewResponse> getMyWritableReviews(String memberId) {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
-        List<Deal> deal = dealRepository.findDealsForWriteReview(member.getMemberNumber(), DealStatus.SUCCESS_DEAL, false);
-        return deal.stream()
-                .map(MemberMapper::toMyWritableReviewResponse)
-                .collect(Collectors.toList());
+        TradeHistoryRequest<MySellingHistoryResponse> request = new TradeHistoryRequest<>(
+                status, startDate, endDate, authentication, BidType.SELL_BID.getBidType(),
+                MemberMapper::toMySellingBidHistoryResponse,
+                MemberMapper::toMySellingPendingDealHistoryResponse,
+                MemberMapper::toMySellingFinishedDealHistoryResponse
+        );
+        return getHistory(request);
     }
 
     public List<MyNotificationResponse> getMyNotifications(String memberId) {
@@ -240,4 +226,22 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(newMember);
         return newMember;
     }
+
+    private <T> List<T> getHistory(TradeHistoryRequest<T> request) {
+        Member member = memberRepository.findByMemberId(request.getAuthentication().getName())
+                .orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        switch (request.getStatus()) {
+            case "bidding":
+                List<Bid> bids = filterMyBiddingByDateRange(request.getStartDate(), request.getEndDate(), member, request.getBidType());
+                return bids.stream().map(request.getBidMapper()).collect(Collectors.toList());
+            case "pending":
+                List<Deal> pendingDeals = filterMyPendingByDateRange(request.getStartDate(), request.getEndDate(), member);
+                return pendingDeals.stream().map(request.getPendingMapper()).collect(Collectors.toList());
+            default:
+                List<Deal> finishedDeals = filterMyFinishedByDateRange(request.getStartDate(), request.getEndDate(), member);
+                return finishedDeals.stream().map(request.getFinishedMapper()).collect(Collectors.toList());
+        }
+    }
+
 }
